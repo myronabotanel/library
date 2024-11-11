@@ -3,10 +3,7 @@ package org.example.repository;
 import org.example.model.Book;
 import org.example.model.builder.BookBuilder;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +23,9 @@ public class BookRepositoryMySQL implements BookRepository
         String sql = "SELECT * FROM book;";
         List<Book> books = new ArrayList<>();
 
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = preparedStatement.executeQuery(sql);
 
             while(resultSet.next()){  //primul apel de next ne duce la primul elem si ne zice daca mai sunt elem
                 books.add(getBookfromResultSet(resultSet));
@@ -41,12 +38,11 @@ public class BookRepositoryMySQL implements BookRepository
 
     @Override
     public Optional<Book> findById(Long id) {
-        String sql = "SELECT * FROM book WHERE id=" + id;
-
+        String sql = "SELECT * FROM book WHERE id= ?;";
         Optional<Book> book = Optional.empty();
-        try{
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery(sql);
 
             if(resultSet.next())
             {
@@ -60,11 +56,13 @@ public class BookRepositoryMySQL implements BookRepository
 
     @Override
     public boolean save(Book book) {
-        String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() + "\',\'" + book.getPublishedDate() + "\' );";  // pentru a se realiza cu succes scrierea
+        String newSql = "INSERT INTO book (author, title, publishedDate) VALUES (?, ?, ?);";  // pentru a se realiza cu succes scrierea
 
-        try{
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(newSql); //statement de ddl (update, delete, comenzile ce modifica baza de date, nu fac un simplu select. necesita cele mai mari drepturi
+        try(PreparedStatement preparedStatement = connection.prepareStatement(newSql)) {
+            preparedStatement.setString(1, book.getAuthor());
+            preparedStatement.setString(2, book.getTitle());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            preparedStatement.executeUpdate();
         }catch(SQLException e){
             e.printStackTrace();
             return false;
@@ -74,10 +72,11 @@ public class BookRepositoryMySQL implements BookRepository
 
     @Override
     public boolean delete(Book book) {
-        String newSql = "DELETE FROM book WHERE author=\'" + book.getAuthor() + "\' AND title=\'" + book.getTitle() + "\';";
-        try{
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(newSql);
+        String newSql = "DELETE FROM book WHERE author = ? AND title = ?;";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(newSql)) {
+            preparedStatement.setString(1, book.getAuthor());
+            preparedStatement.setString(2, book.getTitle());
+            preparedStatement.executeUpdate();
         } catch(SQLException e){
             e.printStackTrace();
             return false;
@@ -89,9 +88,8 @@ public class BookRepositoryMySQL implements BookRepository
     public void removeAll() {
         String sql = "TRUNCATE TABLE book;";  //daca folosim DELETE, id tot creste
         //nu putem conditiona TRUNCATE. delete ul da, dar, pentru o metoda de removeAll, putem folosi TRUNCATE. El necesita mai multe drepturi
-        try{
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.executeUpdate();
         } catch(SQLException e){
             e.printStackTrace();
         }
