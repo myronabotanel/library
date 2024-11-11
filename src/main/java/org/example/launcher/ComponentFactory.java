@@ -1,13 +1,16 @@
 package org.example.launcher;
 
 import javafx.stage.Stage;
+import org.example.controller.BookController;
 import org.example.database.DatabaseConnectionFactory;
+import org.example.mapper.BookMapper;
 import org.example.model.Book;
 import org.example.repository.BookRepository;
 import org.example.repository.BookRepositoryMySQL;
 import org.example.service.BookService;
 import org.example.service.BookServiceImplementation;
 import org.example.view.BookView;
+import org.example.view.model.BookDTO;
 
 import javax.sound.sampled.BooleanControl;
 import java.sql.Connection;
@@ -33,9 +36,9 @@ public class ComponentFactory {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.bookRepository = new BookRepositoryMySQL(connection);
         this.bookService = new BookServiceImplementation(bookRepository);
-        List<Book> books = bookService.findAll();
-        this.bookView = new BookView(primaryStage, books);  //in mom in care afisam , sa avem toate cartile din baza de date
-        this.bookController = new BookController(bookView, bookService); //in controller relationam doar cu service, niciodata cu repository
+        List<BookDTO> bookDTOs = BookMapper.convertBookListToBookDTOList(bookService.findAll());
+        this.bookView = new BookView(primaryStage, bookDTOs);
+        this.bookController = new BookController(bookView, bookService);
     }
     public BookView getBookView() {
         return bookView;
