@@ -11,7 +11,7 @@ import org.example.view.model.builder.BookDTOBuilder;
 
 public class BookController
 {
-    //de aici nu se acceseaza Book Repositoru
+    //de aici nu se acceseaza Book Repository
     private final BookView bookView;
     private final BookService bookService;
     public BookController(BookView bookView, BookService bookService){
