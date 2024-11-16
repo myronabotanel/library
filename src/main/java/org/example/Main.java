@@ -3,7 +3,10 @@ package org.example;
 import org.example.database.DatabaseConnectionFactory;
 import org.example.model.*;
 import org.example.model.builder.*;
-import org.example.repository.*;
+import org.example.repository.book.BookRepository;
+import org.example.repository.book.BookRepositoryCacheDecorator;
+import org.example.repository.book.BookRepositoryMySQL;
+import org.example.repository.book.Cache;
 import org.example.service.BookService;
 import org.example.service.BookServiceImplementation;
 
@@ -36,25 +39,26 @@ public class Main {
 
         //TREBUIE CREATE PT TOT PROIECTUL SI INJECTATE DIN EXTERIOR
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(false).getConnection();
-        BookRepository bookRepository = new BookRepositoryMySQL(connection);
-
+        BookRepository bookRepository = new BookRepositoryCacheDecorator(new BookRepositoryMySQL(connection), new Cache<>());
         BookService bookService = new BookServiceImplementation(bookRepository);
 
         bookService.save(book);
         System.out.println(bookService.findAll());
-        Book bookScrisoare = new BookBuilder()
-                        .setAuthor("Ion Luca Karagiale")
-                        .setTitle("O scrisoare pierduta")
-                        .setPublishedDate(LocalDate.of(1884, 12, 18))
-                        .build();
-        bookService.save(bookScrisoare);
-        System.out.println(bookService.findAll());
-        bookService.delete(bookScrisoare);
-        System.out.println(bookService.findAll());
-        bookService.save(book);
-        System.out.println(bookService.findAll());
-        bookService.delete(book);
-        System.out.println(bookService.findAll());
+//        bookService.save(book);
+//        System.out.println(bookService.findAll());
+//        Book bookScrisoare = new BookBuilder()
+//                        .setAuthor("Ion Luca Karagiale")
+//                        .setTitle("O scrisoare pierduta")
+//                        .setPublishedDate(LocalDate.of(1884, 12, 18))
+//                        .build();
+//        bookService.save(bookScrisoare);
+//        System.out.println(bookService.findAll());
+//        bookService.delete(bookScrisoare);
+//        System.out.println(bookService.findAll());
+//        bookService.save(book);
+//        System.out.println(bookService.findAll());
+//        bookService.delete(book);
+//        System.out.println(bookService.findAll());
 
 
     }

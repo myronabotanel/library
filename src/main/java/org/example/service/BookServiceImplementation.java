@@ -1,8 +1,7 @@
 package org.example.service;
 
 import org.example.model.Book;
-import org.example.repository.BookRepository;
-import org.example.repository.BookRepositoryMock;
+import org.example.repository.book.BookRepository;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
