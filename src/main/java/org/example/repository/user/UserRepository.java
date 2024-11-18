@@ -1,6 +1,7 @@
 package org.example.repository.user;
 
 import org.example.model.User;
+import org.example.model.validator.Notification;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ public interface UserRepository
 {
     List<User> findAll();
 
-    User findByUsernameAndPassword(String username, String password);
+    Notification<User> findByUsernameAndPassword(String username, String password);
 
     boolean save(User user);
 

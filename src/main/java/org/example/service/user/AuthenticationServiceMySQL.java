@@ -3,6 +3,8 @@ package org.example.service.user;
 import org.example.model.Role;
 import org.example.model.User;
 import org.example.model.builder.UserBuilder;
+import org.example.model.validator.Notification;
+import org.example.model.validator.UserValidator;
 import org.example.repository.security.RightsRolesRepository;
 import org.example.repository.user.UserRepository;
 
@@ -11,8 +13,10 @@ import java.security.MessageDigest;
 import java.util.Collections;
 
 import static org.example.database.Constants.Roles.CUSTOMER;
+import static org.example.database.Constants.Roles.CUSTOMER;
 
-public class AuthenticationServiceMySQL implements AuthenticationService{
+public class AuthenticationServiceMySQL implements AuthenticationService {
+
     private final UserRepository userRepository;
     private final RightsRolesRepository rightsRolesRepository;
 
@@ -22,9 +26,7 @@ public class AuthenticationServiceMySQL implements AuthenticationService{
     }
 
     @Override
-    public boolean register(String username, String password) {
-        //criptare mesaj -> fsasadada -> mesaj
-        //hashing parolasimpla ->asdfgrtfrfdsa
+    public Notification<Boolean> register(String username, String password) {
 
         Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
 
@@ -34,12 +36,25 @@ public class AuthenticationServiceMySQL implements AuthenticationService{
                 .setRoles(Collections.singletonList(customerRole))
                 .build();
 
-        return userRepository.save(user);
+        UserValidator userValidator = new UserValidator(user);
+
+        boolean userValid = userValidator.validate();
+        Notification<Boolean> userRegisterNotification = new Notification<>();
+
+        if (!userValid){
+            userValidator.getErrors().forEach(userRegisterNotification::addError);
+            userRegisterNotification.setResult(Boolean.FALSE);
+        } else {
+            user.setPassword(hashPassword(password));
+            userRegisterNotification.setResult(userRepository.save(user));
+        }
+
+        return userRegisterNotification;
     }
 
     @Override
-    public User login(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, hashPassword(password));  //input ul trebuie hash uit
+    public Notification<User> login(String username, String password) {
+        return userRepository.findByUsernameAndPassword(username, hashPassword(password));
     }
 
     @Override
@@ -53,7 +68,7 @@ public class AuthenticationServiceMySQL implements AuthenticationService{
             // 1 byte = 8 biți
             // 1 byte = 1 char
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));  //transformarea parolei in biti
+            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
 
             for (byte b : hash) {
@@ -68,4 +83,3 @@ public class AuthenticationServiceMySQL implements AuthenticationService{
         }
     }
 }
-

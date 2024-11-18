@@ -2,7 +2,10 @@ package org.example.controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import org.example.launcher.EmployeeComponentFactory;
+import org.example.launcher.LoginComponentFactory;
 import org.example.model.User;
+import org.example.model.validator.Notification;
 import org.example.model.validator.UserValidator;
 import org.example.service.user.AuthenticationService;
 import org.example.view.LoginView;
@@ -30,11 +33,13 @@ public class LoginController
             String username = loginView.getUsername();
             String password = loginView.getPassword();
 
-            User user =authenticationService.login(username, password);
-            if(user == null){
-                loginView.setActionTargetText("Invalid Username or password");
+            Notification<User> loginNotification = authenticationService.login(username, password);
+
+            if (loginNotification.hasErrors()){
+                loginView.setActionTargetText(loginNotification.getFormattedErrors());
             }else{
-                loginView.setActionTargetText("Login successful!");
+                loginView.setActionTargetText("LogIn Successfull!");
+                EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
             }
         }
     }
@@ -45,18 +50,13 @@ public class LoginController
         public void handle(ActionEvent event) {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
-            User user =authenticationService.login(username, password);
-            UserValidator userValidator = new UserValidator(user);
-            userValidator.validate();
-            final List<String> errors = userValidator.getErrors();
-            if(errors.isEmpty()){
-                if(authenticationService.register(username, password)){
-                    loginView.setActionTargetText("Register successfull");
-                }else{
-                    loginView.setActionTargetText("Register not successfull");
-                }
-            }else{
-                loginView.setActionTargetText(userValidator.getFormattedErrors());
+
+            Notification<Boolean> registerNotification = authenticationService.register(username, password);
+
+            if (registerNotification.hasErrors()) {
+                loginView.setActionTargetText(registerNotification.getFormattedErrors());
+            } else {
+                loginView.setActionTargetText("Register successful!");
             }
         }
     }

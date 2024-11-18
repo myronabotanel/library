@@ -16,8 +16,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-public class LoginView
-{
+public class LoginView {
+
     private TextField userTextField;
     private PasswordField passwordField;
     private Button signInButton;
@@ -63,7 +63,7 @@ public class LoginView
         Label password = new Label("Password");
         gridPane.add(password, 0, 2);
 
-        passwordField = new PasswordField(); //ascunsa parola
+        passwordField = new PasswordField();
         gridPane.add(passwordField, 1, 2);
 
         signInButton = new Button("Sign In");

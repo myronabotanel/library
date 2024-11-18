@@ -2,6 +2,7 @@ package org.example.repository.user;
 
 import org.example.model.User;
 import org.example.model.builder.UserBuilder;
+import org.example.model.validator.Notification;
 import org.example.repository.security.RightsRolesRepository;
 
 import java.sql.Connection;
@@ -12,11 +13,12 @@ import java.sql.Statement;
 import java.util.List;
 
 import static org.example.database.Constants.Tables.USER;
+public class UserRepositoryMySQL implements UserRepository {
 
-public class UserRepositoryMySQL implements UserRepository
-{
     private final Connection connection;
     private final RightsRolesRepository rightsRolesRepository;
+
+
     public UserRepositoryMySQL(Connection connection, RightsRolesRepository rightsRolesRepository) {
         this.connection = connection;
         this.rightsRolesRepository = rightsRolesRepository;
@@ -26,35 +28,46 @@ public class UserRepositoryMySQL implements UserRepository
     public List<User> findAll() {
         return null;
     }
+
     // SQL Injection Attacks should not work after fixing functions
     // Be careful that the last character in sql injection payload is an empty space
     // alexandru.ghiurutan95@gmail.com' and 1=1; --
     // ' or username LIKE '%admin%'; --
-    @Override
-    public User findByUsernameAndPassword(String username, String password) //metoda ce trebuie schimbata in proiect
-    {
-        try{
-            Statement statement = connection.createStatement();
-            String fetchUserSql =
-                    "Select * from `" + USER + "` where `username`=\'" + username + "\' and `password`=\'" + password + "\'"; //folosind id ul userului, putem sa i asociem rolul
-            ResultSet userResultSet = statement.executeQuery(fetchUserSql);
-            userResultSet.next();
 
-            User user = new UserBuilder()
+    @Override
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
+
+        Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
+        try {
+            Statement statement = connection.createStatement();
+
+            String fetchUserSql =
+                    "Select * from `" + USER + "` where `username`=\'" + username + "\' and `password`=\'" + password + "\'";
+            ResultSet userResultSet = statement.executeQuery(fetchUserSql);
+            if (userResultSet.next())
+            {
+                User user = new UserBuilder()
                         .setUsername(userResultSet.getString("username"))
                         .setPassword(userResultSet.getString("password"))
                         .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
                         .build();
-            return user;
-        }catch (SQLException e){
+
+                findByUsernameAndPasswordNotification.setResult(user);
+            } else {
+                findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                return findByUsernameAndPasswordNotification;
+            }
+
+        } catch (SQLException e) {
             System.out.println(e.toString());
+            findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
         }
-        return null;
+
+        return findByUsernameAndPasswordNotification;
     }
 
     @Override
-    public boolean save(User user) //adauga user in database
-    {
+    public boolean save(User user) {
         try {
             PreparedStatement insertUserStatement = connection
                     .prepareStatement("INSERT INTO user values (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -67,13 +80,14 @@ public class UserRepositoryMySQL implements UserRepository
             long userId = rs.getLong(1);
             user.setId(userId);
 
-            rightsRolesRepository.addRolesToUser(user, user.getRoles()); //scriem rolul pe care user ul trebuie sa l aibe
+            rightsRolesRepository.addRolesToUser(user, user.getRoles());
 
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+
     }
 
     @Override
@@ -88,8 +102,7 @@ public class UserRepositoryMySQL implements UserRepository
     }
 
     @Override
-    public boolean existsByUsername(String email)
-    {
+    public boolean existsByUsername(String email) {
         try {
             Statement statement = connection.createStatement();
 
@@ -103,4 +116,5 @@ public class UserRepositoryMySQL implements UserRepository
             return false;
         }
     }
+
 }

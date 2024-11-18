@@ -14,10 +14,10 @@ import java.util.List;
 
 import java.util.List;
 import static org.example.database.Constants.Tables.*;
+public class RightsRolesRepositoryMySQL implements RightsRolesRepository {
 
-public class RightsRolesRepositoryMySQL implements RightsRolesRepository
-{
     private final Connection connection;
+
     public RightsRolesRepositoryMySQL(Connection connection) {
         this.connection = connection;
     }
@@ -44,7 +44,6 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository
         } catch (SQLException e) {
 
         }
-
     }
 
     @Override

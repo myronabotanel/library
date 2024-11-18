@@ -1,5 +1,6 @@
 package org.example.view;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -20,10 +21,8 @@ import javax.swing.*;
 import java.util.List;
 //in presentation sau View NU e logica!
 public class BookView {
-    private TableView<BookDTO> bookTableView;
-    private ObservableList<BookDTO> booksObservableList; //final, ca sa nu pierdem referinta setata in tabel si modificarile nu se vor mai vedea.
-    //dar avem voie s adaugam, sa stergem, dar sa nu facem alta atribuire
-
+    private TableView bookTableView;
+    private ObservableList<BookDTO> booksObservableList;
     private TextField authorTextField;
     private TextField titleTextField;
     private Label authorLabel;
@@ -31,7 +30,7 @@ public class BookView {
     private Button saveButton;
     private Button deleteButton;
 
-    public BookView(Stage primaryStage, List<BookDTO>books){
+    public BookView(Stage primaryStage, List<BookDTO> bookDTOS){
         primaryStage.setTitle("Library");
 
         GridPane gridPane = new GridPane();
@@ -40,7 +39,7 @@ public class BookView {
         Scene scene = new Scene(gridPane, 720, 480);
         primaryStage.setScene(scene);
 
-        booksObservableList = FXCollections.observableArrayList(books);
+        booksObservableList = FXCollections.observableArrayList(bookDTOS);
         initTableView(gridPane);
 
         initSaveOptions(gridPane);
@@ -48,19 +47,14 @@ public class BookView {
         primaryStage.show();
     }
 
-    private void initializeGridPane(GridPane gridPane) {
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(25, 25, 25, 25));
-    }
-
-    private void initTableView(GridPane gridPane) {
-        bookTableView = new TableView<>();
-        bookTableView.setPlaceholder(new Label("No books to display"));
+    private void initTableView(GridPane gridPane){
+        bookTableView = new TableView<BookDTO>();
+        bookTableView.setPlaceholder(
+                new Label("No rows to display"));
 
         TableColumn<BookDTO, String> titleColumn = new TableColumn<BookDTO, String>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+
         TableColumn<BookDTO, String> authorColumn = new TableColumn<BookDTO, String>("Author");
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
 
@@ -68,25 +62,21 @@ public class BookView {
 
         bookTableView.setItems(booksObservableList);
 
-        gridPane.add(bookTableView,0, 0, 5, 1);
+        gridPane.add(bookTableView,0,0, 5,1);
     }
 
-    private void initSaveOptions(GridPane gridPane)
-    {
+    private void initSaveOptions(GridPane gridPane){
         titleLabel = new Label("Title");
         gridPane.add(titleLabel, 1, 1);
+
         titleTextField = new TextField();
         gridPane.add(titleTextField, 2, 1);
 
         authorLabel = new Label("Author");
         gridPane.add(authorLabel, 3, 1);
+
         authorTextField = new TextField();
         gridPane.add(authorTextField, 4, 1);
-
-        titleLabel = new Label("Title");
-        gridPane.add(titleLabel, 1, 1);
-        titleTextField = new TextField();
-        gridPane.add(titleTextField, 2, 1);
 
         saveButton = new Button("Save");
         gridPane.add(saveButton, 5, 1);
@@ -95,35 +85,55 @@ public class BookView {
         gridPane.add(deleteButton, 6, 1);
     }
 
+    private void initializeGridPane(GridPane gridPane){
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(25, 25, 25, 25));
+    }
+
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener){
         saveButton.setOnAction(saveButtonListener);
     }
+
+    public void addSelectionTableListener(ChangeListener selectionTableListener){
+        bookTableView.getSelectionModel().selectedItemProperty().addListener(selectionTableListener);
+    }
+
     public void addDeleteButtonListener(EventHandler<ActionEvent> deleteButtonListener){
         deleteButton.setOnAction(deleteButtonListener);
     }
 
-    public void addDisplayAlertMessage (String title, String header, String content){
+    public void displayAlertMessage(String titleInformation, String headerInformation, String contextInformation){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
+        alert.setTitle(titleInformation);
+        alert.setHeaderText(headerInformation);
+        alert.setContentText(contextInformation);
 
-        alert.showAndWait();  //va afisa si va astepta pana cand il inchid cu mana mea
+        alert.showAndWait();
     }
+
     public String getTitle(){
         return titleTextField.getText();
     }
+
     public String getAuthor(){
         return authorTextField.getText();
     }
-    public void addBookToObserver(BookDTO bookDTO){
+
+    public ObservableList<BookDTO> getBooksObservableList(){
+        return booksObservableList;
+    }
+
+    public void addBookToObservableList(BookDTO bookDTO){
         this.booksObservableList.add(bookDTO);
     }
-    public void removeBookFromObserver(BookDTO bookDTO){
+
+    public void removeBookFromObservableList(BookDTO bookDTO){
         this.booksObservableList.remove(bookDTO);
     }
 
-    public TableView<BookDTO> getBookTableView() {
+    public TableView getBookTableView(){
         return bookTableView;
     }
 }

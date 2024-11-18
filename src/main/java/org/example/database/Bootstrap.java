@@ -16,8 +16,11 @@ import static org.example.database.Constants.Roles.ROLES;
 import static org.example.database.Constants.Schemas.SCHEMAS;
 import static org.example.database.Constants.Tables.*;
 import static org.example.database.Constants.getRolesRights;
+// Script - code that automates some steps or processes
 
-public class Bootstrap {private static RightsRolesRepository rightsRolesRepository;
+public class Bootstrap {
+
+    private static RightsRolesRepository rightsRolesRepository;
 
     public static void main(String[] args) throws SQLException {
         dropAll();
