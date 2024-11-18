@@ -6,8 +6,8 @@ import org.example.database.DatabaseConnectionFactory;
 import org.example.mapper.BookMapper;
 import org.example.repository.book.BookRepository;
 import org.example.repository.book.BookRepositoryMySQL;
-import org.example.service.BookService;
-import org.example.service.BookServiceImplementation;
+import org.example.service.book.BookService;
+import org.example.service.book.BookServiceImplementation;
 import org.example.view.BookView;
 import org.example.view.model.BookDTO;
 

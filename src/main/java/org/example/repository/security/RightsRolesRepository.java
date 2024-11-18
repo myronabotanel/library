@@ -1,5 +1,9 @@
 package org.example.repository.security;
 
+import org.example.model.Right;
+import org.example.model.Role;
+import org.example.model.User;
+
 import java.util.List;
 
 public interface RightsRolesRepository

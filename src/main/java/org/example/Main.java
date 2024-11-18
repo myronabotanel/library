@@ -7,8 +7,14 @@ import org.example.repository.book.BookRepository;
 import org.example.repository.book.BookRepositoryCacheDecorator;
 import org.example.repository.book.BookRepositoryMySQL;
 import org.example.repository.book.Cache;
-import org.example.service.BookService;
-import org.example.service.BookServiceImplementation;
+import org.example.repository.security.RightsRolesRepository;
+import org.example.repository.security.RightsRolesRepositoryMySQL;
+import org.example.repository.user.UserRepository;
+import org.example.repository.user.UserRepositoryMySQL;
+import org.example.service.book.BookService;
+import org.example.service.book.BookServiceImplementation;
+import org.example.service.user.AuthenticationService;
+import org.example.service.user.AuthenticationServiceMySQL;
 
 import java.sql.Connection;
 import java.time.LocalDate;
@@ -41,6 +47,13 @@ public class Main {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(false).getConnection();
         BookRepository bookRepository = new BookRepositoryCacheDecorator(new BookRepositoryMySQL(connection), new Cache<>());
         BookService bookService = new BookServiceImplementation(bookRepository);
+
+        RightsRolesRepository rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
+        UserRepository userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
+        AuthenticationService authenticationService = new AuthenticationServiceMySQL(userRepository, rightsRolesRepository);
+
+        authenticationService.register("Miro", "miro");
+        System.out.println(authenticationService.login("Miro", "miro"));
 
         bookService.save(book);
         System.out.println(bookService.findAll());

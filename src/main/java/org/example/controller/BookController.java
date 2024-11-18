@@ -2,10 +2,9 @@ package org.example.controller;
 
 import javafx.event.EventHandler;
 import org.example.mapper.BookMapper;
-import org.example.service.BookService;
+import org.example.service.book.BookService;
 import org.example.view.BookView;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import org.example.view.model.BookDTO;
 import org.example.view.model.builder.BookDTOBuilder;
 
