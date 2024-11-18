@@ -13,14 +13,13 @@ import java.security.MessageDigest;
 import java.util.Collections;
 
 import static org.example.database.Constants.Roles.CUSTOMER;
-import static org.example.database.Constants.Roles.CUSTOMER;
 
-public class AuthenticationServiceMySQL implements AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
     private final RightsRolesRepository rightsRolesRepository;
 
-    public AuthenticationServiceMySQL(UserRepository userRepository, RightsRolesRepository rightsRolesRepository) {
+    public AuthenticationServiceImpl(UserRepository userRepository, RightsRolesRepository rightsRolesRepository) {
         this.userRepository = userRepository;
         this.rightsRolesRepository = rightsRolesRepository;
     }
