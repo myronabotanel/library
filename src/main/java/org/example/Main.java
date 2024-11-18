@@ -3,9 +3,18 @@ package org.example;
 import org.example.database.DatabaseConnectionFactory;
 import org.example.model.*;
 import org.example.model.builder.*;
-import org.example.repository.*;
-import org.example.service.BookService;
-import org.example.service.BookServiceImplementation;
+import org.example.repository.book.BookRepository;
+import org.example.repository.book.BookRepositoryCacheDecorator;
+import org.example.repository.book.BookRepositoryMySQL;
+import org.example.repository.book.Cache;
+import org.example.repository.security.RightsRolesRepository;
+import org.example.repository.security.RightsRolesRepositoryMySQL;
+import org.example.repository.user.UserRepository;
+import org.example.repository.user.UserRepositoryMySQL;
+import org.example.service.book.BookService;
+import org.example.service.book.BookServiceImplementation;
+import org.example.service.user.AuthenticationService;
+import org.example.service.user.AuthenticationServiceMySQL;
 
 import java.sql.Connection;
 import java.time.LocalDate;
@@ -36,25 +45,33 @@ public class Main {
 
         //TREBUIE CREATE PT TOT PROIECTUL SI INJECTATE DIN EXTERIOR
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(false).getConnection();
-        BookRepository bookRepository = new BookRepositoryMySQL(connection);
-
+        BookRepository bookRepository = new BookRepositoryCacheDecorator(new BookRepositoryMySQL(connection), new Cache<>());
         BookService bookService = new BookServiceImplementation(bookRepository);
 
+        RightsRolesRepository rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
+        UserRepository userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
+        AuthenticationService authenticationService = new AuthenticationServiceMySQL(userRepository, rightsRolesRepository);
+
+        authenticationService.register("Miro", "miro");
+        System.out.println(authenticationService.login("Miro", "miro"));
+
         bookService.save(book);
         System.out.println(bookService.findAll());
-        Book bookScrisoare = new BookBuilder()
-                        .setAuthor("Ion Luca Karagiale")
-                        .setTitle("O scrisoare pierduta")
-                        .setPublishedDate(LocalDate.of(1884, 12, 18))
-                        .build();
-        bookService.save(bookScrisoare);
-        System.out.println(bookService.findAll());
-        bookService.delete(bookScrisoare);
-        System.out.println(bookService.findAll());
-        bookService.save(book);
-        System.out.println(bookService.findAll());
-        bookService.delete(book);
-        System.out.println(bookService.findAll());
+//        bookService.save(book);
+//        System.out.println(bookService.findAll());
+//        Book bookScrisoare = new BookBuilder()
+//                        .setAuthor("Ion Luca Karagiale")
+//                        .setTitle("O scrisoare pierduta")
+//                        .setPublishedDate(LocalDate.of(1884, 12, 18))
+//                        .build();
+//        bookService.save(bookScrisoare);
+//        System.out.println(bookService.findAll());
+//        bookService.delete(bookScrisoare);
+//        System.out.println(bookService.findAll());
+//        bookService.save(book);
+//        System.out.println(bookService.findAll());
+//        bookService.delete(book);
+//        System.out.println(bookService.findAll());
 
 
     }

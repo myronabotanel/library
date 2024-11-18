@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.book;
 
 import org.example.model.Book;
 
@@ -13,5 +13,4 @@ public interface BookService
     boolean delete (Book book);
 
     int getAgeOfBook (Long id); //e in service deoarece implica, si in mica masura, de logica.Repository se ocupa doar cu citire din baza de date
-
 }

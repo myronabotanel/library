@@ -1,7 +1,8 @@
-package org.example.repository;
+package org.example.repository.book;
 
 import org.example.model.Book;
 import org.example.model.builder.BookBuilder;
+import org.example.repository.book.BookRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
