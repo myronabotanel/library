@@ -16,7 +16,7 @@ public class JDBConnectionWrapper
     {
         try{
             Class.forName(JDBC_DRIVER); //ca si cum pui o cartela intr un telefon
-            connection = DriverManager.getConnection(DB_URL + schema, USER, PASSWORD); //apelam nr si stabilim o conectiune
+            connection = DriverManager.getConnection(DB_URL + schema + "?allowMultiQueries=true", USER, PASSWORD); //apelam nr si stabilim o conectiune
             createTables();
         }catch (ClassNotFoundException e){  //prima data punem exceptia specifica. pe urma cea mai generala
             e.printStackTrace();

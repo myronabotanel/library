@@ -34,10 +34,10 @@ public class Constants {
     }
 
     public static class Schemas {
-        public static final String TEST = "testlibrary";
+        public static final String TEST = "test_library";
         public static final String PRODUCTION = "library";
 
-        public static final String[] SCHEMAS = new String[]{TEST, PRODUCTION};
+        public static final String[] SCHEMAS = new String[]{PRODUCTION};
     }
 
     public static class Tables {

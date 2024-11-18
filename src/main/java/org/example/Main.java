@@ -14,7 +14,7 @@ import org.example.repository.user.UserRepositoryMySQL;
 import org.example.service.book.BookService;
 import org.example.service.book.BookServiceImplementation;
 import org.example.service.user.AuthenticationService;
-import org.example.service.user.AuthenticationServiceMySQL;
+import org.example.service.user.AuthenticationServiceImpl;
 
 import java.sql.Connection;
 import java.time.LocalDate;
@@ -50,7 +50,7 @@ public class Main {
 
         RightsRolesRepository rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
         UserRepository userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
-        AuthenticationService authenticationService = new AuthenticationServiceMySQL(userRepository, rightsRolesRepository);
+        AuthenticationService authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
 
         authenticationService.register("Miro", "miro");
         System.out.println(authenticationService.login("Miro", "miro"));

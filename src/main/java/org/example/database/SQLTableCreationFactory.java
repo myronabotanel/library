@@ -12,7 +12,7 @@ public class SQLTableCreationFactory
                     " pulishedDate datetime DEFAULT NULL," +
                     " PRIMARY KEY (id)," +
                     " UNIQUE KEY id_UNIQUE (id)" +
-                    ")ENGINE=InnoDB ANUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
+                    ")ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
             case USER -> "CREATE TABLE IF NOT EXISTS user(" +
                     "  id INT NOT NULL AUTO_INCREMENT," +
                     "  username VARCHAR(200) NOT NULL," +

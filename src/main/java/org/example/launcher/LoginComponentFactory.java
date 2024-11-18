@@ -8,14 +8,12 @@ import org.example.repository.security.RightsRolesRepositoryMySQL;
 import org.example.repository.user.UserRepository;
 import org.example.repository.user.UserRepositoryMySQL;
 import org.example.service.user.AuthenticationService;
-import org.example.service.user.AuthenticationServiceMySQL;
+import org.example.service.user.AuthenticationServiceImpl;
 import org.example.view.LoginView;
 
 
 import javafx.stage.Stage;
 import java.sql.Connection;
-import org.example.controller.*;
-import org.example.database.*;
 
 
 public class LoginComponentFactory {
@@ -43,7 +41,7 @@ public class LoginComponentFactory {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTests).getConnection();
         this.rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
         this.userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
-        this.authenticationService = new AuthenticationServiceMySQL(userRepository, rightsRolesRepository);
+        this.authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
         this.loginView = new LoginView(stage);
         this.loginController = new LoginController(loginView, authenticationService);
         this.bookRepository = new BookRepositoryMySQL(connection);
