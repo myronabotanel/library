@@ -9,6 +9,9 @@ public class Book
     private String author;
     private LocalDate publishedDate;
 
+    private Double price;
+    private Long stock;
+
     public Long getId() {
         return id;
     }
@@ -39,6 +42,22 @@ public class Book
 
     public void setPublishedDate(LocalDate publishedDate) {
         this.publishedDate = publishedDate;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public Long getStock() {
+        return stock;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public void setStock(Long stock) {
+        this.stock = stock;
     }
 
     @Override

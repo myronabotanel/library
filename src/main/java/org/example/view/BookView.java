@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.example.model.Book;
 import org.example.view.model.BookDTO;
 
 import javafx.event.EventHandler;
@@ -19,9 +18,9 @@ import javafx.event.ActionEvent;
 import javax.swing.*;
 
 import java.util.List;
-//in presentation sau View NU e logica!
+
 public class BookView {
-    private TableView bookTableView;
+    private TableView<BookDTO> bookTableView;
     private ObservableList<BookDTO> booksObservableList;
     private TextField authorTextField;
     private TextField titleTextField;
@@ -47,22 +46,58 @@ public class BookView {
         primaryStage.show();
     }
 
-    private void initTableView(GridPane gridPane){
+    private void initTableView(GridPane gridPane) {
         bookTableView = new TableView<BookDTO>();
-        bookTableView.setPlaceholder(
-                new Label("No rows to display"));
+        bookTableView.setPlaceholder(new Label("No rows to display"));
 
-        TableColumn<BookDTO, String> titleColumn = new TableColumn<BookDTO, String>("Title");
+        // Coloană pentru Titlu
+        TableColumn<BookDTO, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<BookDTO, String> authorColumn = new TableColumn<BookDTO, String>("Author");
+        // Coloană pentru Autor
+        TableColumn<BookDTO, String> authorColumn = new TableColumn<>("Author");
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
 
-        bookTableView.getColumns().addAll(titleColumn, authorColumn);
+        // Coloană pentru Preț
+        TableColumn<BookDTO, Double> priceColumn = new TableColumn<>("Price");
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        // Coloană pentru Stoc (cantitate)
+        TableColumn<BookDTO, Integer> stockColumn = new TableColumn<>("Stock");
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
+        // Coloană pentru butonul de vânzare
+        TableColumn<BookDTO, Void> saleColumn = new TableColumn<>("Sale");
+        saleColumn.setCellFactory(col -> {
+            TableCell<BookDTO, Void> cell = new TableCell<>() {
+                private final Button saleButton = new Button("Sell");
+
+                {
+                    saleButton.setOnAction(event -> {
+                        BookDTO bookDTO = getTableView().getItems().get(getIndex());
+                        showSaleDialog(bookDTO);
+                    });
+                }
+
+                @Override
+                public void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(saleButton);
+                    }
+                }
+            };
+            return cell;
+        });
+
+        // Adăugăm toate coloanele în TableView
+        bookTableView.getColumns().addAll(titleColumn, authorColumn, priceColumn, stockColumn, saleColumn);
         bookTableView.setItems(booksObservableList);
 
-        gridPane.add(bookTableView,0,0, 5,1);
+        // Adăugăm TableView la grid
+        gridPane.add(bookTableView, 0, 0, 5, 1);
     }
 
     private void initSaveOptions(GridPane gridPane){
@@ -136,4 +171,43 @@ public class BookView {
     public TableView getBookTableView(){
         return bookTableView;
     }
+
+    private void showSaleDialog(BookDTO bookDTO) {
+        // Creăm un dialog pentru a introduce cantitatea de vânzare
+        TextInputDialog quantityDialog = new TextInputDialog();
+        quantityDialog.setTitle("Sell Book");
+        quantityDialog.setHeaderText("Enter quantity for " + bookDTO.getTitle());
+        quantityDialog.setContentText("Quantity:");
+
+        quantityDialog.showAndWait().ifPresent(quantityText -> {
+            try {
+                // Încearcă să convertești textul introdus într-un număr întreg
+                int quantity = Integer.parseInt(quantityText);
+                if (quantity <= 0) {
+                    displayAlertMessage("Invalid Quantity", "The quantity must be positive", "Please enter a valid quantity.");
+                    return;
+                }
+
+                // Verifică dacă există stoc suficient
+//                if (bookDTO.getStock() < quantity) {
+//                    displayAlertMessage("Insufficient Stock", "Not enough stock available", "The stock is lower than the requested quantity.");
+//                    return;
+//                }
+
+                // Realizează vânzarea
+                //saleService.sellBook(bookDTO, quantity); // Procesarea vânzării
+
+                // Actualizează stocul cărții
+                //bookDTO.setStock(bookDTO.getStock() - quantity);
+
+                // Actualizează tabelul
+                bookTableView.refresh();
+
+            } catch (NumberFormatException e) {
+                displayAlertMessage("Invalid Input", "Please enter a valid number for the quantity", "The quantity must be a valid integer.");
+            }
+        });
+    }
+
+
 }

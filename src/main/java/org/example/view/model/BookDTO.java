@@ -38,5 +38,23 @@ public class BookDTO {
         return title;
     }
 
+    private double price;
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+    private long stock;
+
+    public long getStock() {
+        return stock;
+    }
+
+    public void setStock(long stock) {
+        this.stock = stock;
+    }
     //pt date?
 }
