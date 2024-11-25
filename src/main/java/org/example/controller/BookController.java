@@ -4,6 +4,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import org.example.mapper.BookMapper;
+import org.example.model.Book;
+import org.example.model.builder.BookBuilder;
 import org.example.service.book.BookService;
 import org.example.view.BookView;
 import javafx.event.ActionEvent;
@@ -27,29 +29,47 @@ public class BookController
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
     }
 
-    private class SaveButtonListener implements EventHandler<ActionEvent>{
-
+    private class SaveButtonListener implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
             String title = bookView.getTitle();
             String author = bookView.getAuthor();
+            String priceString = bookView.getPrice();
 
-            if (title.isEmpty() || author.isEmpty()){
-                bookView.displayAlertMessage("Save Error", "Problem at Title or Author fields", "Can not have empty Author or Title fields. Please fill in the fields before submitting Save!");
-                bookView.getBooksObservableList().get(0).setTitle("No Name");
-            } else {
-                BookDTO bookDTO = new BookDTOBuilder().setAuthor(author).setTitle(title).build();
-                boolean savedBook = bookService.save(BookMapper.convertBookDTOToBook(bookDTO));
+            if (title.isEmpty() || author.isEmpty() || priceString.isEmpty()) {
+                bookView.displayAlertMessage("Save Error", "Input Error", "All fields must be filled. Please fill in the title, author, and price before submitting.");
+                return;
+            }
+
+            try {
+                double price = Double.parseDouble(priceString);
+
+                BookDTO bookDTO = new BookDTOBuilder()
+                        .setAuthor(author)
+                        .setTitle(title)
+                        .setPrice(price)
+                        .setStock(1) // Setăm stocul inițial ca 1
+                        .build();
+                Book book = new BookBuilder()
+                        .setAuthor(author)
+                        .setTitle(title)
+                        .setPrice(price)
+                        .setStock(1) // Setăm stocul inițial ca 1
+                        .build();
+                boolean savedBook = bookService.save(book);
 
                 if (savedBook) {
                     bookView.displayAlertMessage("Save Successful", "Book Added", "Book was successfully added to the database.");
                     bookView.addBookToObservableList(bookDTO);
                 } else {
-                    bookView.displayAlertMessage("Save Not Successful", "Book was not added", "There was a problem at adding the book into the database.");
+                    bookView.displayAlertMessage("Save Not Successful", "Book was not added", "There was a problem adding the book to the database.");
                 }
+            } catch (NumberFormatException e) {
+                bookView.displayAlertMessage("Save Error", "Input Error", "Price must be a valid number.");
             }
         }
     }
+
 
     private class SelectionTableListener implements ChangeListener {
 

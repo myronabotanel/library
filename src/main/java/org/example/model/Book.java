@@ -8,6 +8,25 @@ public class Book
     private String title;
     private String author;
     private LocalDate publishedDate;
+    private double price; // Adaugă atributul price
+    private long stock;   // Adaugă atributul stock
+
+    // Getters și Setters pentru noile atribute
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public long getStock() {
+        return stock;
+    }
+
+    public void setStock(long stock) {
+        this.stock = stock;
+    }
 
     public Long getId() {
         return id;

@@ -10,6 +10,8 @@ public class SQLTableCreationFactory
                     " id int(11) NOT NULL AUTO_INCREMENT," +
                     " author varchar(500) NOT NULL," +
                     " pulishedDate datetime DEFAULT NULL," +
+                    " price double NOT NULL," + // Adaugăm coloana price
+                    " stock bigint NOT NULL," + // Adaugăm coloana stock
                     " PRIMARY KEY (id)," +
                     " UNIQUE KEY id_UNIQUE (id)" +
                     ")ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
@@ -72,4 +74,3 @@ public class SQLTableCreationFactory
         };
     }
 }
-

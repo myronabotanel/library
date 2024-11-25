@@ -79,4 +79,3 @@ public class Constants {
                 DELETE_BOOK, UPDATE_BOOK, SELL_BOOK, BUY_BOOK, RETURN_BOOK};
     }
 }
-

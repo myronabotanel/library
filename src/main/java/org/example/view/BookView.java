@@ -10,23 +10,24 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.example.model.Book;
 import org.example.view.model.BookDTO;
 
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 
-import javax.swing.*;
-
 import java.util.List;
-//in presentation sau View NU e logica!
+
 public class BookView {
-    private TableView bookTableView;
+    private TableView<BookDTO> bookTableView;
     private ObservableList<BookDTO> booksObservableList;
     private TextField authorTextField;
     private TextField titleTextField;
+    private TextField priceTextField;
+    private TextField stockTextField;
     private Label authorLabel;
     private Label titleLabel;
+    private Label priceLabel;
+    private Label stockLabel;
     private Button saveButton;
     private Button deleteButton;
 
@@ -47,22 +48,58 @@ public class BookView {
         primaryStage.show();
     }
 
-    private void initTableView(GridPane gridPane){
+    private void initTableView(GridPane gridPane) {
         bookTableView = new TableView<BookDTO>();
-        bookTableView.setPlaceholder(
-                new Label("No rows to display"));
+        bookTableView.setPlaceholder(new Label("No rows to display"));
 
-        TableColumn<BookDTO, String> titleColumn = new TableColumn<BookDTO, String>("Title");
+        // Coloană pentru Titlu
+        TableColumn<BookDTO, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<BookDTO, String> authorColumn = new TableColumn<BookDTO, String>("Author");
+        // Coloană pentru Autor
+        TableColumn<BookDTO, String> authorColumn = new TableColumn<>("Author");
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
 
-        bookTableView.getColumns().addAll(titleColumn, authorColumn);
+        // Coloană pentru Preț
+        TableColumn<BookDTO, Double> priceColumn = new TableColumn<>("Price");
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        // Coloană pentru Stoc (cantitate)
+        TableColumn<BookDTO, Integer> stockColumn = new TableColumn<>("Stock");
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
+        // Coloană pentru butonul de vânzare
+        TableColumn<BookDTO, Void> saleColumn = new TableColumn<>("Sale");
+        saleColumn.setCellFactory(col -> {
+            TableCell<BookDTO, Void> cell = new TableCell<>() {
+                private final Button saleButton = new Button("Sell");
+
+                {
+                    saleButton.setOnAction(event -> {
+                        BookDTO bookDTO = getTableView().getItems().get(getIndex());
+                        showSaleDialog(bookDTO);
+                    });
+                }
+
+                @Override
+                public void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(saleButton);
+                    }
+                }
+            };
+            return cell;
+        });
+
+        // Adăugăm toate coloanele în TableView
+        bookTableView.getColumns().addAll(titleColumn, authorColumn, priceColumn, stockColumn, saleColumn);
         bookTableView.setItems(booksObservableList);
 
-        gridPane.add(bookTableView,0,0, 5,1);
+        // Adăugăm TableView la grid
+        gridPane.add(bookTableView, 0, 0, 5, 1);
     }
 
     private void initSaveOptions(GridPane gridPane){
@@ -78,11 +115,23 @@ public class BookView {
         authorTextField = new TextField();
         gridPane.add(authorTextField, 4, 1);
 
+        priceLabel = new Label("Price");
+        gridPane.add(priceLabel, 1, 2);
+
+        priceTextField = new TextField();
+        gridPane.add(priceTextField, 2, 2);
+
+        stockLabel = new Label("Stock");
+        gridPane.add(stockLabel, 3, 2);
+
+        stockTextField = new TextField();
+        gridPane.add(stockTextField, 4, 2);
+
         saveButton = new Button("Save");
-        gridPane.add(saveButton, 5, 1);
+        gridPane.add(saveButton, 5, 2);
 
         deleteButton = new Button("Delete");
-        gridPane.add(deleteButton, 6, 1);
+        gridPane.add(deleteButton, 6, 2);
     }
 
     private void initializeGridPane(GridPane gridPane){
@@ -121,6 +170,14 @@ public class BookView {
         return authorTextField.getText();
     }
 
+    public String getPrice() {
+        return priceTextField.getText();
+    }
+
+    public String getStock() {
+        return stockTextField.getText();
+    }
+
     public ObservableList<BookDTO> getBooksObservableList(){
         return booksObservableList;
     }
@@ -133,7 +190,38 @@ public class BookView {
         this.booksObservableList.remove(bookDTO);
     }
 
-    public TableView getBookTableView(){
+    public TableView<BookDTO> getBookTableView(){
         return bookTableView;
+    }
+
+    private void showSaleDialog(BookDTO bookDTO) {
+        TextInputDialog quantityDialog = new TextInputDialog();
+        quantityDialog.setTitle("Sell Book");
+        quantityDialog.setHeaderText("Enter quantity for " + bookDTO.getTitle());
+        quantityDialog.setContentText("Quantity:");
+
+        quantityDialog.showAndWait().ifPresent(quantityText -> {
+            try {
+                int quantity = Integer.parseInt(quantityText);
+                if (quantity <= 0) {
+                    displayAlertMessage("Invalid Quantity", "The quantity must be positive", "Please enter a valid quantity.");
+                    return;
+                }
+
+                if (bookDTO.getStock() < quantity) {
+                    displayAlertMessage("Insufficient Stock", "Not enough stock available", "The stock is lower than the requested quantity.");
+                    return;
+                }
+
+               // saleService.sellBook(bookDTO, quantity);
+
+                bookDTO.setStock(bookDTO.getStock() - quantity);
+
+                bookTableView.refresh();
+
+            } catch (NumberFormatException e) {
+                displayAlertMessage("Invalid Input", "Please enter a valid number for the quantity", "The quantity must be a valid integer.");
+            }
+        });
     }
 }
