@@ -15,8 +15,6 @@ import org.example.view.model.BookDTO;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 
-import javax.swing.*;
-
 import java.util.List;
 
 public class BookView {
@@ -24,8 +22,12 @@ public class BookView {
     private ObservableList<BookDTO> booksObservableList;
     private TextField authorTextField;
     private TextField titleTextField;
+    private TextField priceTextField;
+    private TextField stockTextField;
     private Label authorLabel;
     private Label titleLabel;
+    private Label priceLabel;
+    private Label stockLabel;
     private Button saveButton;
     private Button deleteButton;
 
@@ -113,11 +115,23 @@ public class BookView {
         authorTextField = new TextField();
         gridPane.add(authorTextField, 4, 1);
 
+        priceLabel = new Label("Price");
+        gridPane.add(priceLabel, 1, 2);
+
+        priceTextField = new TextField();
+        gridPane.add(priceTextField, 2, 2);
+
+        stockLabel = new Label("Stock");
+        gridPane.add(stockLabel, 3, 2);
+
+        stockTextField = new TextField();
+        gridPane.add(stockTextField, 4, 2);
+
         saveButton = new Button("Save");
-        gridPane.add(saveButton, 5, 1);
+        gridPane.add(saveButton, 5, 2);
 
         deleteButton = new Button("Delete");
-        gridPane.add(deleteButton, 6, 1);
+        gridPane.add(deleteButton, 6, 2);
     }
 
     private void initializeGridPane(GridPane gridPane){
@@ -156,6 +170,14 @@ public class BookView {
         return authorTextField.getText();
     }
 
+    public String getPrice() {
+        return priceTextField.getText();
+    }
+
+    public String getStock() {
+        return stockTextField.getText();
+    }
+
     public ObservableList<BookDTO> getBooksObservableList(){
         return booksObservableList;
     }
@@ -168,12 +190,11 @@ public class BookView {
         this.booksObservableList.remove(bookDTO);
     }
 
-    public TableView getBookTableView(){
+    public TableView<BookDTO> getBookTableView(){
         return bookTableView;
     }
 
     private void showSaleDialog(BookDTO bookDTO) {
-        // Creăm un dialog pentru a introduce cantitatea de vânzare
         TextInputDialog quantityDialog = new TextInputDialog();
         quantityDialog.setTitle("Sell Book");
         quantityDialog.setHeaderText("Enter quantity for " + bookDTO.getTitle());
@@ -181,26 +202,21 @@ public class BookView {
 
         quantityDialog.showAndWait().ifPresent(quantityText -> {
             try {
-                // Încearcă să convertești textul introdus într-un număr întreg
                 int quantity = Integer.parseInt(quantityText);
                 if (quantity <= 0) {
                     displayAlertMessage("Invalid Quantity", "The quantity must be positive", "Please enter a valid quantity.");
                     return;
                 }
 
-                // Verifică dacă există stoc suficient
-//                if (bookDTO.getStock() < quantity) {
-//                    displayAlertMessage("Insufficient Stock", "Not enough stock available", "The stock is lower than the requested quantity.");
-//                    return;
-//                }
+                if (bookDTO.getStock() < quantity) {
+                    displayAlertMessage("Insufficient Stock", "Not enough stock available", "The stock is lower than the requested quantity.");
+                    return;
+                }
 
-                // Realizează vânzarea
-                //saleService.sellBook(bookDTO, quantity); // Procesarea vânzării
+               // saleService.sellBook(bookDTO, quantity);
 
-                // Actualizează stocul cărții
-                //bookDTO.setStock(bookDTO.getStock() - quantity);
+                bookDTO.setStock(bookDTO.getStock() - quantity);
 
-                // Actualizează tabelul
                 bookTableView.refresh();
 
             } catch (NumberFormatException e) {
@@ -208,6 +224,4 @@ public class BookView {
             }
         });
     }
-
-
 }

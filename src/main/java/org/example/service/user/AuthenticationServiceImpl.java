@@ -63,7 +63,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private String hashPassword(String password) {
         try {
-            // Sercured Hash Algorithm - 256: 256/4 = 64, impartim la 4 pentru ca
+            // Sercured Hash Algorithm - 256
             // 1 byte = 8 biți
             // 1 byte = 1 char
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

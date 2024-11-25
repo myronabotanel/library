@@ -22,7 +22,7 @@ public class BookRepositoryMock implements BookRepository
 
     @Override
     public Optional<Book> findById(Long id) {
-         //Optional.empty() - inlocuitorul pentru null
+        //Optional.empty() - inlocuitorul pentru null
         return books.parallelStream()    //precum curgerae apei, vin una cate una
                 .filter(it -> it.getId().equals(id))  //importand sa folosim equals deoarece avem Long. un obj.
                 .findFirst();
@@ -41,5 +41,18 @@ public class BookRepositoryMock implements BookRepository
     @Override
     public void removeAll() {
         books.clear();
+    }
+
+    @Override
+    public boolean updateStock(long id, int newStock) {
+        Optional<Book> bookOptional = findById(id);
+
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            book.setStock(newStock);
+            return true;
+        }
+
+        return false;
     }
 }
