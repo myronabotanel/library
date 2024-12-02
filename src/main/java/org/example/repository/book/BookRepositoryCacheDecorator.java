@@ -54,20 +54,4 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
         cache.invalidateCache();
         decoratedBookRepository.removeAll();
     }
-
-    @Override
-    public boolean updateStock(long id, int newStock) {
-        cache.invalidateCache(); // Invalidează cache-ul pentru a-l reîncărca ulterior
-
-        boolean updated = decoratedBookRepository.updateStock(id, newStock);
-        if (updated && cache.hasResult()) {
-            // Actualizăm cache-ul
-            cache.load()
-                    .stream()
-                    .filter(book -> book.getId().equals(id))
-                    .forEach(book -> book.setStock(newStock)); // Presupunem că Book are setter pentru stoc
-        }
-
-        return updated;
-    }
 }

@@ -32,20 +32,20 @@ public class BookBuilder
         book.setAuthor(author);
         return this;
     }
+    public BookBuilder setPrice(Double price)
+    {
+        book.setPrice(price);
+        return this;
+    }
+    public BookBuilder setStock(Integer stock)
+    {
+        book.setStock(stock);
+        return this;
+    }
 
     public BookBuilder setPublishedDate (LocalDate publishedDate)
     {
         book.setPublishedDate(publishedDate);
-        return this;
-    }
-
-    public BookBuilder setPrice(double price) {
-        book.setPrice(price);
-        return this;
-    }
-
-    public BookBuilder setStock(long stock) {
-        book.setStock(stock);
         return this;
     }
 

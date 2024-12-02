@@ -26,6 +26,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Notification<Boolean> register(String username, String password) {
+        // Verifică dacă username-ul este deja folosit
+        if (userRepository.existsByUsername(username)) {
+            Notification<Boolean> userRegisterNotification = new Notification<>();
+            userRegisterNotification.addError("Username already used!");
+            userRegisterNotification.setResult(Boolean.FALSE);
+            return userRegisterNotification; // Întoarce notificarea cu mesaj de eroare
+        }
 
         Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
 

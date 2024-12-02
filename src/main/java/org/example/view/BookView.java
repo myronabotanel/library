@@ -15,19 +15,21 @@ import org.example.view.model.BookDTO;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 
+import javax.swing.*;
+
 import java.util.List;
 
 public class BookView {
     private TableView<BookDTO> bookTableView;
-    private ObservableList<BookDTO> booksObservableList;
+    private ObservableList<BookDTO> booksObservableList;  //cand primeste book nou, se updateaza automat cu tableView => ce e acolo e si in ObservebleList
     private TextField authorTextField;
     private TextField titleTextField;
-    private TextField priceTextField;
-    private TextField stockTextField;
-    private Label authorLabel;
-    private Label titleLabel;
+    private TextField priceField;
+    private TextField stockField;
     private Label priceLabel;
     private Label stockLabel;
+    private Label authorLabel;
+    private Label titleLabel;
     private Button saveButton;
     private Button deleteButton;
 
@@ -40,12 +42,13 @@ public class BookView {
         Scene scene = new Scene(gridPane, 720, 480);
         primaryStage.setScene(scene);
 
-        booksObservableList = FXCollections.observableArrayList(bookDTOS);
+        booksObservableList = FXCollections.observableArrayList(bookDTOS);  //face legatura. nu mai trebuie resetata referinta pt ca se va rupe legatura cu tableView
+        //orice modif in lista modifica si in tabel
         initTableView(gridPane);
 
         initSaveOptions(gridPane);
 
-        primaryStage.show();
+        primaryStage.show();  //se va afisa tot ce e afisat in constructor
     }
 
     private void initTableView(GridPane gridPane) {
@@ -54,7 +57,7 @@ public class BookView {
 
         // Coloană pentru Titlu
         TableColumn<BookDTO, String> titleColumn = new TableColumn<>("Title");
-        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));  //numele din BookDTO => DataBinding intre coloana de Title si BookDTO ul nostru (title)
 
         // Coloană pentru Autor
         TableColumn<BookDTO, String> authorColumn = new TableColumn<>("Author");
@@ -99,40 +102,46 @@ public class BookView {
         bookTableView.setItems(booksObservableList);
 
         // Adăugăm TableView la grid
-        gridPane.add(bookTableView, 0, 0, 5, 1);
+        gridPane.add(bookTableView, 0, 0, 5, 1);  //col 0; 5 coloane de ocupat, 1 rand (parte de label si butoane si parte de tabel)
     }
 
-    private void initSaveOptions(GridPane gridPane){
+    private void initSaveOptions(GridPane gridPane) {
+        // Etichetă și câmp pentru Title
         titleLabel = new Label("Title");
         gridPane.add(titleLabel, 1, 1);
 
         titleTextField = new TextField();
         gridPane.add(titleTextField, 2, 1);
 
+        // Etichetă și câmp pentru Author
         authorLabel = new Label("Author");
         gridPane.add(authorLabel, 3, 1);
 
         authorTextField = new TextField();
         gridPane.add(authorTextField, 4, 1);
 
+        // Etichetă și câmp pentru Price
         priceLabel = new Label("Price");
-        gridPane.add(priceLabel, 1, 2);
+        gridPane.add(priceLabel, 1, 2); // Așezare pe rândul 2, coloana 1
 
-        priceTextField = new TextField();
-        gridPane.add(priceTextField, 2, 2);
+        priceField = new TextField();
+        gridPane.add(priceField, 2, 2); // Așezare pe rândul 2, coloana 2
 
+        // Etichetă și câmp pentru Stock
         stockLabel = new Label("Stock");
-        gridPane.add(stockLabel, 3, 2);
+        gridPane.add(stockLabel, 3, 2); // Așezare pe rândul 2, coloana 3
 
-        stockTextField = new TextField();
-        gridPane.add(stockTextField, 4, 2);
+        stockField = new TextField();
+        gridPane.add(stockField, 4, 2); // Așezare pe rândul 2, coloana 4
 
+        // Butoane Save și Delete
         saveButton = new Button("Save");
-        gridPane.add(saveButton, 5, 2);
+        gridPane.add(saveButton, 5, 2); // Mutat pe rândul 2 pentru aliniere
 
         deleteButton = new Button("Delete");
-        gridPane.add(deleteButton, 6, 2);
+        gridPane.add(deleteButton, 6, 2); // Mutat pe rândul 2 pentru aliniere
     }
+
 
     private void initializeGridPane(GridPane gridPane){
         gridPane.setAlignment(Pos.CENTER);
@@ -144,15 +153,13 @@ public class BookView {
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener){
         saveButton.setOnAction(saveButtonListener);
     }
-
-    public void addSelectionTableListener(ChangeListener selectionTableListener){
-        bookTableView.getSelectionModel().selectedItemProperty().addListener(selectionTableListener);
-    }
-
     public void addDeleteButtonListener(EventHandler<ActionEvent> deleteButtonListener){
         deleteButton.setOnAction(deleteButtonListener);
     }
 
+    public void addSelectionTableListener(ChangeListener selectionTableListener){
+        bookTableView.getSelectionModel().selectedItemProperty().addListener(selectionTableListener);
+    }
     public void displayAlertMessage(String titleInformation, String headerInformation, String contextInformation){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titleInformation);
@@ -169,14 +176,14 @@ public class BookView {
     public String getAuthor(){
         return authorTextField.getText();
     }
-
-    public String getPrice() {
-        return priceTextField.getText();
+    public String getPrice(){
+        return priceField.getText();
+    }
+    public String getStock(){
+        return stockField.getText();
     }
 
-    public String getStock() {
-        return stockTextField.getText();
-    }
+
 
     public ObservableList<BookDTO> getBooksObservableList(){
         return booksObservableList;
@@ -184,17 +191,19 @@ public class BookView {
 
     public void addBookToObservableList(BookDTO bookDTO){
         this.booksObservableList.add(bookDTO);
-    }
+    } //adaugam elem, nu schimbam referinta
 
     public void removeBookFromObservableList(BookDTO bookDTO){
         this.booksObservableList.remove(bookDTO);
     }
 
-    public TableView<BookDTO> getBookTableView(){
+    public TableView getBookTableView(){
         return bookTableView;
     }
 
+
     private void showSaleDialog(BookDTO bookDTO) {
+        // Creăm un dialog pentru a introduce cantitatea de vânzare
         TextInputDialog quantityDialog = new TextInputDialog();
         quantityDialog.setTitle("Sell Book");
         quantityDialog.setHeaderText("Enter quantity for " + bookDTO.getTitle());
@@ -202,21 +211,26 @@ public class BookView {
 
         quantityDialog.showAndWait().ifPresent(quantityText -> {
             try {
+                // Încearcă să convertești textul introdus într-un număr întreg
                 int quantity = Integer.parseInt(quantityText);
                 if (quantity <= 0) {
                     displayAlertMessage("Invalid Quantity", "The quantity must be positive", "Please enter a valid quantity.");
                     return;
                 }
 
-                if (bookDTO.getStock() < quantity) {
-                    displayAlertMessage("Insufficient Stock", "Not enough stock available", "The stock is lower than the requested quantity.");
-                    return;
-                }
+                // Verifică dacă există stoc suficient
+//                if (bookDTO.getStock() < quantity) {
+//                    displayAlertMessage("Insufficient Stock", "Not enough stock available", "The stock is lower than the requested quantity.");
+//                    return;
+//                }
 
-               // saleService.sellBook(bookDTO, quantity);
+                // Realizează vânzarea
+                //saleService.sellBook(bookDTO, quantity); // Procesarea vânzării
 
-                bookDTO.setStock(bookDTO.getStock() - quantity);
+                // Actualizează stocul cărții
+                //bookDTO.setStock(bookDTO.getStock() - quantity);
 
+                // Actualizează tabelul
                 bookTableView.refresh();
 
             } catch (NumberFormatException e) {
@@ -224,4 +238,7 @@ public class BookView {
             }
         });
     }
+
+
+
 }

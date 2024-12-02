@@ -8,25 +8,8 @@ public class Book
     private String title;
     private String author;
     private LocalDate publishedDate;
-    private double price; // Adaugă atributul price
-    private long stock;   // Adaugă atributul stock
-
-    // Getters și Setters pentru noile atribute
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public long getStock() {
-        return stock;
-    }
-
-    public void setStock(long stock) {
-        this.stock = stock;
-    }
+    private Double price;
+    private Integer stock;
 
     public Long getId() {
         return id;
@@ -60,12 +43,23 @@ public class Book
         this.publishedDate = publishedDate;
     }
 
+    public Double getPrice() {return price;}
+
+    public Integer getStock() {return stock;}
+
+    public void setPrice(Double price) {this.price = price;}
+
+    public void setStock(Integer stock) {this.stock = stock;}
+
     @Override
     public String toString() {
-        return "Book: " +
+        return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
-                ", publishedDate=" + publishedDate;
+                ", publishedDate=" + publishedDate +
+                ", price=" + price +
+                ", stock=" + stock +
+                '}';
     }
 }

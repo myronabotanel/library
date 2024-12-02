@@ -26,6 +26,8 @@ public class Main {
                 .setTitle("Ion")
                 .setAuthor("Liviu Rebreanu")
                 .setPublishedDate(LocalDate.of(1910, 10, 21))
+                .setStock(1)
+                .setPrice(20.0)
                 .build();
 
         System.out.println("Miro");
@@ -52,8 +54,8 @@ public class Main {
         UserRepository userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
         AuthenticationService authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
 
-        authenticationService.register("Miro", "miro");
-        System.out.println(authenticationService.login("Miro", "miro"));
+//        authenticationService.register("Miro", "miro");
+//        System.out.println(authenticationService.login("Miro", "miro"));
 
         bookService.save(book);
         System.out.println(bookService.findAll());

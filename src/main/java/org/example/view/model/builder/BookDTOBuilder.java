@@ -24,7 +24,7 @@ public class BookDTOBuilder {
         return this;
     }
 
-    public BookDTOBuilder setStock(long stock) {
+    public BookDTOBuilder setStock(int stock) {
         bookDTO.setStock(stock);
         return this;
     }

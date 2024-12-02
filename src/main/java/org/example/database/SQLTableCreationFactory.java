@@ -9,9 +9,10 @@ public class SQLTableCreationFactory
             case BOOK -> "CREATE TABLE IF NOT EXISTS book(" +
                     " id int(11) NOT NULL AUTO_INCREMENT," +
                     " author varchar(500) NOT NULL," +
-                    " pulishedDate datetime DEFAULT NULL," +
-                    " price double NOT NULL," + // Adaugăm coloana price
-                    " stock bigint NOT NULL," + // Adaugăm coloana stock
+                    " title varchar(500) NOT NULL," +
+                    " publishedDate datetime DEFAULT NULL," +
+                    " price double NOT NULL," +
+                    " stock int NOT NULL," +
                     " PRIMARY KEY (id)," +
                     " UNIQUE KEY id_UNIQUE (id)" +
                     ")ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";

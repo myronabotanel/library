@@ -21,6 +21,7 @@ public class ComponentFactory {
     private final BookService bookService;
 
     private static volatile ComponentFactory instance;
+    //Singleton
 
     // Constructorul este privat pentru a preveni instanțierea din afara clasei
     private ComponentFactory(Boolean componentsForTest, Stage primaryStage) {

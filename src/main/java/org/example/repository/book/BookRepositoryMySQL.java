@@ -50,75 +50,48 @@ public class BookRepositoryMySQL implements BookRepository
                 book = Optional.of(getBookfromResultSet(resultSet)); //=> optional va da fie o valoare mepty, daca nu va gasi o carte cu id ul nostru, fie cartea cu id ul cerut
             }
         }catch(SQLException e){
-            e.printStackTrace();
+            e.printStackTrace(); //printeaza tot stack ul de erori
         }
         return book;
     }
-    public Optional<Book> findByTitleAndAuthor(String title, String author) {
-        String sql = "SELECT * FROM book WHERE title = ? AND author = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, title);
-            preparedStatement.setString(2, author);
-            ResultSet resultSet = preparedStatement.executeQuery();
+
+    @Override
+    public boolean save(Book book) {
+        try {
+            // Verificăm dacă cartea există deja
+            String selectQuery = "SELECT id, stock FROM book WHERE title = ? AND author = ? AND price = ?";
+            PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
+            selectStatement.setString(1, book.getTitle());
+            selectStatement.setString(2, book.getAuthor());
+            selectStatement.setDouble(3, book.getPrice());
+            ResultSet resultSet = selectStatement.executeQuery();
 
             if (resultSet.next()) {
-                Book book = new BookBuilder()
-                        .setTitle(resultSet.getString("title"))
-                        .setAuthor(resultSet.getString("author"))
-                        .setPrice(resultSet.getDouble("price"))
-                        .setStock(resultSet.getLong("stock"))
-                        .build();
-                return Optional.of(book);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
-    }
-
-
-    public boolean save(Book book) {
-        String sql = "INSERT INTO book (author, title, publishedDate, price, stock) VALUES (?, ?, ?, ?, ?)";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            System.out.println("Saving book: " + book); // Log pentru carte
-
-            preparedStatement.setString(1, book.getAuthor());
-            preparedStatement.setString(2, book.getTitle());
-
-            // publishedDate este null
-            if (book.getPublishedDate() != null) {
-                preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+                // Cartea există - actualizăm stocul
+                long bookId = resultSet.getLong("id");
+                int existingStock = resultSet.getInt("stock");
+                String updateQuery = "UPDATE book SET stock = ? WHERE id = ?";
+                PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+                updateStatement.setInt(1, existingStock + book.getStock());
+                updateStatement.setLong(2, bookId);
+                updateStatement.executeUpdate();
+                return true;
             } else {
-                preparedStatement.setNull(3, Types.DATE);
+                // Cartea nu există - o adăugăm
+                String insertQuery = "INSERT INTO book (author, title, publishedDate, price, stock) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                insertStatement.setString(1, book.getAuthor());
+                insertStatement.setString(2, book.getTitle());
+                insertStatement.setDate(3, Date.valueOf(book.getPublishedDate()));
+                insertStatement.setDouble(4, book.getPrice());
+                insertStatement.setInt(5, book.getStock());
+                insertStatement.executeUpdate();
+                return true;
             }
-
-            preparedStatement.setLong(4, book.getStock());
-            preparedStatement.setDouble(5, book.getPrice());
-
-            int rowsInserted = preparedStatement.executeUpdate();
-            System.out.println("Rows inserted: " + rowsInserted); // Log pentru rânduri inserate
-
-            if (rowsInserted > 0) {
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        book.setId(generatedKeys.getLong(1));
-                        System.out.println("Generated ID: " + book.getId()); // Log pentru ID generat
-                    }
-                }
-            }
-
-            System.out.println("Saving book: " + book.getTitle() + ", " + book.getAuthor() + ", " +
-                    book.getPublishedDate() + ", " + book.getStock() + ", " + book.getPrice());
-
-            return rowsInserted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Error saving book: " + e.getMessage());
-            System.err.println("SQL State: " + e.getSQLState());
-            System.err.println("Error Code: " + e.getErrorCode());
-            return false;
         }
+        return false;
     }
 
 
@@ -147,24 +120,6 @@ public class BookRepositoryMySQL implements BookRepository
         }
 
     }
-
-    @Override
-    public boolean updateStock(long id, int newStock) {
-        String sql = "UPDATE book SET stock = ? WHERE id = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, newStock);
-            preparedStatement.setLong(2, id);
-
-            int rowsUpdated = preparedStatement.executeUpdate();
-            return rowsUpdated > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("Error updating stock: " + e.getMessage());
-            return false;
-        }
-    }
-
     private Book getBookfromResultSet(ResultSet resultSet) throws SQLException
     {
         return new BookBuilder()
@@ -172,7 +127,8 @@ public class BookRepositoryMySQL implements BookRepository
                 .setTitle(resultSet.getString("title"))
                 .setAuthor(resultSet.getString("author"))
                 .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
+                .setPrice(resultSet.getDouble("price"))
+                .setStock(resultSet.getInt("stock"))
                 .build();
     }
-
 }

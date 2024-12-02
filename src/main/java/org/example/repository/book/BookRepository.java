@@ -12,7 +12,5 @@ public interface BookRepository
     boolean delete (Book book);
     void removeAll();  //sterge tot din baza de date
 
-    boolean updateStock (long id, int newStock);
-
 
 }

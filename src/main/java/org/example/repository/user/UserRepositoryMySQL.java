@@ -67,14 +67,14 @@ public class UserRepositoryMySQL implements UserRepository {
     }
 
     @Override
-    public boolean save(User user) {
+    public boolean save(User user) {  //adaugam user
         try {
             PreparedStatement insertUserStatement = connection
                     .prepareStatement("INSERT INTO user values (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             insertUserStatement.setString(1, user.getUsername());
             insertUserStatement.setString(2, user.getPassword());
             insertUserStatement.executeUpdate();
-
+            //vom pune in tabela si rolul
             ResultSet rs = insertUserStatement.getGeneratedKeys();
             rs.next();
             long userId = rs.getLong(1);
@@ -94,7 +94,7 @@ public class UserRepositoryMySQL implements UserRepository {
     public void removeAll() {
         try {
             Statement statement = connection.createStatement();
-            String sql = "DELETE from user where id >= 0";
+            String sql = "DELETE from user where id >= 0";   //!!!!!!!!!!concatanare de string uri
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
