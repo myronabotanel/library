@@ -3,6 +3,7 @@ package org.example.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.control.TextInputDialog;
 import org.example.mapper.BookMapper;
 import org.example.service.book.BookService;
 import org.example.view.BookView;
@@ -26,6 +27,7 @@ public class BookController
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addSelectionTableListener(new SelectionTableListener());
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
+        this.bookView.addSellButtonListener(new SellButtonListener());
     }
     private void refreshTableData() {
         // Obținem toate cărțile din baza de date
@@ -110,7 +112,6 @@ public class BookController
 
 
     private class DeleteButtonListener implements EventHandler<ActionEvent>{
-
         @Override
         public void handle(ActionEvent event) {
             BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();  //return idemul selectat
@@ -126,4 +127,55 @@ public class BookController
             }
         }
     }
+    private class SellButtonListener implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent event) {
+            BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();  //return idemul selectat
+            if (bookDTO != null) {
+                TextInputDialog quantityDialog = new TextInputDialog();
+                quantityDialog.setTitle("Sell Book");
+                quantityDialog.setHeaderText("Enter quantity to sell for: " + bookDTO.getTitle());
+                quantityDialog.setContentText("Quantity:");
+
+                String title = bookDTO.getTitle();
+                String author = bookDTO.getAuthor();
+                double price = bookDTO.getPrice();
+                int stock = bookDTO.getStock();
+
+                quantityDialog.showAndWait().ifPresent(quantityText -> {
+                    try {
+                        int quantity = Integer.parseInt(quantityText);
+
+                        if (quantity <= 0) {
+                            bookView.displayAlertMessage("Invalid Quantity", "Error", "The quantity must be a positive number.");
+                            return;
+                        }
+
+                        if (quantity > stock) {
+                            bookView.displayAlertMessage("Insufficient Stock", "Error",
+                                    "Not enough stock available. Current stock: " + bookDTO.getStock());
+                            return;
+                        }
+                        bookDTO.setStock(bookDTO.getStock() - quantity);
+                        // Actualizăm stocul
+                        boolean success = bookService.update(BookMapper.convertBookDTOToBook(bookDTO)); // Salvează modificarea stocului
+                        System.out.println(String.format("Stock actualizat: %d", stock - quantity));
+                        // Reîmprospătăm tabelul
+                        refreshTableData();
+                        if (success) {
+                            bookView.displayAlertMessage("Sale Successful", "Book Sold",
+                                    "Successfully sold " + quantity + " copies of " + bookDTO.getTitle());
+                        }
+                    }catch (NumberFormatException e) {
+                        bookView.displayAlertMessage("Invalid Input", "Error",
+                                "Please enter a valid number for the quantity.");
+                    }
+                });
+            } else {
+                bookView.displayAlertMessage("No Selection", "Sell Process",
+                        "You need to select a book before pressing the Sell button.");
+            }
+        }
+    }
+
 }

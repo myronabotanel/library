@@ -51,6 +51,12 @@ public class BookServiceImplementation implements BookService
     public boolean delete(Book book) {
         return bookRepository.delete(book);
     }
+
+    @Override
+    public boolean update (Book book) {
+        return bookRepository.update(book);
+    }
+
     //E BINE CA INTR O CLASA SA FIE UN PUNCT DE INTRARE PENTRU O IMPLEMENTARE.
     //SA NU FAC UN LUCRU DE 2 ORI, CI SA MA FOLOSESC DE IMPLEMENT
     @Override

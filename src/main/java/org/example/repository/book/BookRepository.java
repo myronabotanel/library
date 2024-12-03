@@ -11,6 +11,6 @@ public interface BookRepository
     boolean save (Book book);
     boolean delete (Book book);
     void removeAll();  //sterge tot din baza de date
-
+    boolean update (Book book);
 
 }
