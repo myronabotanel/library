@@ -5,6 +5,6 @@ import org.example.model.Sale;
 import java.util.List;
 //va manipula înregistrările vânzărilor în baza de date. Acesta va salva și va căuta vânzările realizate.
 public interface SaleRepository {
-    void save(Sale sale);
+    boolean save(Sale sale);
     List<Sale> findAll();
 }

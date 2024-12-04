@@ -42,7 +42,7 @@ public class SaleView {
             public void handle(ActionEvent event) {
                 Book selectedBook = bookComboBox.getValue();
                 double price = Double.parseDouble(priceTextField.getText());
-                saleService.sellBook(selectedBook, price);
+               // saleService.sellBook(selectedBook, price);
             }
         });
 

@@ -4,13 +4,19 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.shape.QuadCurve;
 import org.example.mapper.BookMapper;
+import org.example.model.Sale;
 import org.example.service.book.BookService;
+import org.example.service.sale.SaleService;
+import org.example.service.sale.SaleServiceImplementation;
+import org.example.service.user.CurrentUserService;
 import org.example.view.BookView;
 import javafx.event.ActionEvent;
 import org.example.view.model.BookDTO;
 import org.example.view.model.builder.BookDTOBuilder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -19,10 +25,12 @@ public class BookController
     //de aici nu se acceseaza Book Repository
     private final BookView bookView;
     private final BookService bookService;
+    private final SaleService saleService;
 
-    public BookController(BookView bookView, BookService bookService){
+    public BookController(BookView bookView, BookService bookService, SaleService saleService){
         this.bookView = bookView;
         this.bookService = bookService;
+        this.saleService = saleService;
 
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addSelectionTableListener(new SelectionTableListener());
@@ -156,6 +164,8 @@ public class BookController
                                     "Not enough stock available. Current stock: " + bookDTO.getStock());
                             return;
                         }
+                        double totalPrice = price * quantity;
+
                         bookDTO.setStock(bookDTO.getStock() - quantity);
                         // Actualizăm stocul
                         boolean success = bookService.update(BookMapper.convertBookDTOToBook(bookDTO)); // Salvează modificarea stocului
@@ -163,6 +173,15 @@ public class BookController
                         // Reîmprospătăm tabelul
                         refreshTableData();
                         if (success) {
+                            Sale sale = new Sale(
+                                    null, //id generat in baza de date
+                                    title,
+                                    CurrentUserService.getCurrentUsername(),
+                                    quantity,
+                                    totalPrice,
+                                    LocalDateTime.now()
+                            );
+                            boolean saleSaved = saleService.save(sale); //salvam vanzarea
                             bookView.displayAlertMessage("Sale Successful", "Book Sold",
                                     "Successfully sold " + quantity + " copies of " + bookDTO.getTitle());
                         }

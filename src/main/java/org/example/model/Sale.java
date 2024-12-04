@@ -1,48 +1,83 @@
 package org.example.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Sale {
-    private Book book;
-    private LocalDate saleDate;
-    private double price;
+    private Long id;
+    private String bookTitle;
+    private String sellerName;
+    private int quantity;
+    private Double totalPrice;
+    private LocalDateTime orderDate;
 
-    public Sale(Book book, LocalDate saleDate, double price) {
-        this.book = book;
-        this.saleDate = saleDate;
-        this.price = price;
+    public Sale(Long id, String bookTitle, String sellerName, int quantity, Double totalPrice, LocalDateTime orderDate) {
+        this.id = id;
+        this.bookTitle = bookTitle;
+        this.sellerName = sellerName;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.orderDate = orderDate;
+    }
+    public Sale(){}
+
+    public Long getId() {
+        return id;
     }
 
-    public Book getBook() {
-        return book;
+    public String getBookTitle() {
+        return bookTitle;
     }
 
-    public void setBook(Book book) {
-        this.book = book;
+    public String getSellerName() {
+        return sellerName;
     }
 
-    public LocalDate getSaleDate() {
-        return saleDate;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setSaleDate(LocalDate saleDate) {
-        this.saleDate = saleDate;
+    public Double getTotalPrice() {
+        return totalPrice;
     }
 
-    public double getPrice() {
-        return price;
+    public LocalDateTime getOrderDate() {
+        return orderDate;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 
     @Override
     public String toString() {
         return "Sale{" +
-                "book=" + book.getTitle() +
-                ", saleDate=" + saleDate +
-                ", price=" + price +
+                "id=" + id +
+                ", bookTitle='" + bookTitle + '\'' +
+                ", sellerName='" + sellerName + '\'' +
+                ", quantity=" + quantity +
+                ", totalPrice=" + totalPrice +
+                ", orderDate=" + orderDate +
                 '}';
     }
 }

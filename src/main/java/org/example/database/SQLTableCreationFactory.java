@@ -71,6 +71,15 @@ public class SQLTableCreationFactory
                     "    REFERENCES role (id)" +
                     "    ON DELETE CASCADE" +
                     "    ON UPDATE CASCADE);";
+            case ORDER -> "CREATE TABLE IF NOT EXISTS `order` (" +
+                    "id int(11) NOT NULL AUTO_INCREMENT," +
+                    "book_title VARCHAR(500) NOT NULL," +
+                    "seller_name VARCHAR(200) NOT NULL," +
+                    "quantity INT NOT NULL," +
+                    "total_price DOUBLE NOT NULL," +
+                    "order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                    "PRIMARY KEY (id)" +
+                    ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
             default -> "";
         };
     }
