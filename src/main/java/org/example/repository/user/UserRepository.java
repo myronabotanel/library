@@ -16,4 +16,5 @@ public interface UserRepository
     void removeAll();
 
     boolean existsByUsername(String username);
+    boolean isUsersTableEmpty();
 }

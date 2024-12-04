@@ -33,13 +33,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             userRegisterNotification.setResult(Boolean.FALSE);
             return userRegisterNotification; // Întoarce notificarea cu mesaj de eroare
         }
+        boolean isFirstUser = userRepository.isUsersTableEmpty();
+
+        Role role = isFirstUser ? rightsRolesRepository.findRoleByTitle("ADMINISTRATOR") : rightsRolesRepository.findRoleByTitle(CUSTOMER);
+
 
         Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
 
         User user = new UserBuilder()
                 .setUsername(username)
                 .setPassword(password)
-                .setRoles(Collections.singletonList(customerRole))
+                .setRoles(Collections.singletonList(role))
                 .build();
 
         UserValidator userValidator = new UserValidator(user);

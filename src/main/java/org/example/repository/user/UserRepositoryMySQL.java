@@ -116,5 +116,25 @@ public class UserRepositoryMySQL implements UserRepository {
             return false;
         }
     }
+    @Override
+    public boolean isUsersTableEmpty() {
+        Statement statement;
+        try {
+            // Creăm interogarea pentru a verifica dacă există vreun utilizator
+            statement = connection.createStatement();
+            String checkUsersSql = "SELECT COUNT(*) FROM `user`";
+            ResultSet resultSet = statement.executeQuery(checkUsersSql);
+
+            // Dacă numărul de utilizatori este 0, tabela este goală
+            if (resultSet.next()) {
+                return resultSet.getInt(1) == 0;  // Dacă numărul de utilizatori este 0, returnăm true
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  // Tratarea erorilor
+        }
+
+        return false;  // Dacă apare o eroare, considerăm că tabela nu este goală
+    }
+
 
 }

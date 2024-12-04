@@ -2,6 +2,7 @@ package org.example.repository.sale;
 
 import org.example.model.Book;
 import org.example.model.Sale;
+import org.example.model.User;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ public class SaleRepositoryMySQL implements SaleRepository {
             return false; // Returnăm false în caz de eroare
         }
     }
+
 
     @Override
     public List<Sale> findAll() {
