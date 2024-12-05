@@ -53,22 +53,6 @@ public class ComponentFactory {
         return instance;
     }
 
-    public BookView getBookView() {
-        return bookView;
-    }
-
-    public BookController getBookController() {
-        return bookController;
-    }
-
-    public BookRepository getBookRepository() {
-        return bookRepository;
-    }
-
-    public BookService getBookService() {
-        return bookService;
-    }
-
     ///////////////////////////////
 
 }
