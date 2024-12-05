@@ -5,10 +5,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
+import org.example.database.Constants;
 import org.example.launcher.EmployeeComponentFactory;
 import org.example.launcher.LoginComponentFactory;
 import org.example.mapper.UserMapper;
 import org.example.model.Order;
+import org.example.model.Right;
 import org.example.model.validator.Notification;
 import org.example.service.admin.AdminService;
 import org.example.service.order.OrderService;
@@ -56,6 +58,7 @@ public class AdminController
         this.adminView.addSelectionTableListener(new SelectionTableListener());
         this.adminView.addDeleteButtonListener(new DeleteButtonListener());
         this.adminView.addGenerateReportListener(new GenerateReportListener());
+        this.adminView.addUpgradeButtonListener(new UpgradeListener());
     }
 
     private void refreshTable() {
@@ -193,6 +196,44 @@ public class AdminController
         }
 
 
+    }
+
+    private class UpgradeListener  implements EventHandler<ActionEvent>{
+
+        @Override
+        public void handle(ActionEvent event) {
+            UserDTO userDTO = (UserDTO) adminView.getUserTableView().getSelectionModel().getSelectedItem();
+            if (userDTO == null) {
+                adminView.displayAlertMessage("Error", "No user selected", "Please select a user to upgrade.");
+                return;
+            }
+            // Verificam daca utilizatorul este EMPLOYEE
+            if (!"EMPLOYEE".equalsIgnoreCase(userDTO.getRole())) {
+                adminView.displayAlertMessage("Error", "Cannot upgrade user", "Only employees can be upgraded to admin.");
+                return;
+            }
+
+            // Actualizam rolul utilizatorului
+            userDTO.setRole("admin");
+
+            //lista drepturi admin
+            List<Right> adminRights = new ArrayList<>();
+            for (String rightName : Constants.Rights.RIGHTS) {
+                adminRights.add(new Right(null, rightName));
+            }
+
+            // Cream rolul 'ADMIN' cu toate drepturile
+            Role role = new Role(1L, "administrator", adminRights);
+            boolean updateSuccessful = adminService.updateUserRole(userDTO.getUsername(), role);
+            // schimbam în lista observabila
+            if (updateSuccessful) {
+                // Actualizam si interfata grafica
+                adminView.getUserTableView().refresh();
+                adminView.displayAlertMessage("Success", "User upgraded", "The selected user is now an admin.");
+            } else {
+                adminView.displayAlertMessage("Error", "Database Update Failed", "An error occurred while updating the user in the database.");
+            }
+        }
     }
 
 

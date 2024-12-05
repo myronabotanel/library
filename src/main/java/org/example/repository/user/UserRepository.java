@@ -1,5 +1,6 @@
 package org.example.repository.user;
 
+import org.example.model.Role;
 import org.example.model.User;
 import org.example.model.validator.Notification;
 
@@ -18,4 +19,5 @@ public interface UserRepository
 
     boolean existsByUsername(String username);
     boolean isUsersTableEmpty();
+    boolean upgradeUserRole (String username, Role role);
 }

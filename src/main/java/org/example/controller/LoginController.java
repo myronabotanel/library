@@ -2,6 +2,8 @@ package org.example.controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import org.example.launcher.AdminComponentFactory;
 import org.example.launcher.CustomerComponentFactory;
 import org.example.launcher.EmployeeComponentFactory;
@@ -12,6 +14,7 @@ import org.example.model.validator.UserValidator;
 import org.example.service.user.AuthenticationService;
 import org.example.service.user.CurrentUserService;
 import org.example.view.LoginView;
+import org.example.view.NavigationManager;
 
 import java.util.EventListener;
 import java.util.List;
@@ -35,6 +38,7 @@ public class LoginController
         public void handle(javafx.event.ActionEvent event) {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
+
 
             Notification<User> loginNotification = authenticationService.login(username, password);
 

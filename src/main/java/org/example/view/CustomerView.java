@@ -30,6 +30,10 @@ public class CustomerView {
         Scene scene = new Scene(gridPane, 720, 480);
         primaryStage.setScene(scene);
 
+        Button backButton = new Button("Back");
+        backButton.setOnAction(event -> NavigationManager.goBack(primaryStage));
+        gridPane.add(backButton, 0, 1); // Adaugă lângă tabel, pe poziția dorită
+
         booksObservableList = FXCollections.observableArrayList(bookDTOS);
         initTableView(gridPane);
 

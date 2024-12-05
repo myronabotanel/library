@@ -41,6 +41,10 @@ public class BookView {
         Scene scene = new Scene(gridPane, 720, 480);
         primaryStage.setScene(scene);
 
+        Button backButton = new Button("Back");
+        backButton.setOnAction(event -> NavigationManager.goBack(primaryStage));
+        gridPane.add(backButton, 0, 3); // Adaugă sub tabel
+
         booksObservableList = FXCollections.observableArrayList(bookDTOS);
         initTableView(gridPane);
         initSaveOptions(gridPane);

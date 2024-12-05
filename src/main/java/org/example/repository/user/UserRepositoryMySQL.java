@@ -1,5 +1,6 @@
 package org.example.repository.user;
 
+import org.example.model.Role;
 import org.example.model.User;
 import org.example.model.builder.UserBuilder;
 import org.example.model.validator.Notification;
@@ -166,6 +167,50 @@ public class UserRepositoryMySQL implements UserRepository {
 
         return false;  // Dacă apare o eroare, considerăm că tabela nu este goală
     }
+
+    @Override
+    public boolean upgradeUserRole(String username, Role role) {
+        // 1. Găsim utilizatorul după username
+        User user = findByUsername(username);
+        if (user == null) {
+            return false;  // Dacă nu exista utilizatorul, returnam false
+        }
+
+        String sql = "UPDATE user_role SET role_id = ? WHERE user_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setLong(1, role.getId());
+            preparedStatement.setLong(2, user.getId());
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private User findByUsername(String username) {
+        String sql = "SELECT * FROM `" + USER + "` WHERE `username` = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return new UserBuilder()
+                        .setId(resultSet.getLong("id"))
+                        .setUsername(resultSet.getString("username"))
+                        .setPassword(resultSet.getString("password"))
+                        .setRoles(rightsRolesRepository.findRolesForUser(resultSet.getLong("id")))
+                        .build();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;  // Dacă nu găsim utilizatorul
+    }
+
 
 
 }

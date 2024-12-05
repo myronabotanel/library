@@ -31,6 +31,7 @@ public class AdminView {
     private Button generateReportButton;
     private Button viewBooksButton;
     private Text actiontarget;
+    private Button upgradeButton;
 
     public AdminView(Stage primaryStage, List<UserDTO> userDTOS) {
         primaryStage.setTitle("Admin Panel");
@@ -38,8 +39,12 @@ public class AdminView {
         GridPane gridPane = new GridPane();
         initializeGridPane(gridPane);
 
-        Scene scene = new Scene(gridPane, 1024, 768);
+        Scene scene = new Scene(gridPane, 900, 650);
         primaryStage.setScene(scene);
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(event -> NavigationManager.goBack(primaryStage));
+        gridPane.add(backButton, 0, 7);
 
         usersObservableList = FXCollections.observableArrayList(userDTOS);
         initTableView(gridPane);
@@ -100,6 +105,8 @@ public class AdminView {
         generateReportButton = new Button("Generate Report");
         gridPane.add(generateReportButton, 8, 1);
 
+        upgradeButton = new Button("Upgrade");
+        gridPane.add(upgradeButton, 5, 2);
 
     }
 
@@ -126,6 +133,11 @@ public class AdminView {
     public void addGenerateReportListener(EventHandler<ActionEvent> addButtonListener) {
         generateReportButton.setOnAction(addButtonListener);
     }
+
+    public void addUpgradeButtonListener(EventHandler<ActionEvent> upgradeButtonListener) {
+        upgradeButton.setOnAction(upgradeButtonListener);
+    }
+
 
     public void addSelectionTableListener(ChangeListener selectionTableListener) {
         userTableView.getSelectionModel().selectedItemProperty().addListener(selectionTableListener);

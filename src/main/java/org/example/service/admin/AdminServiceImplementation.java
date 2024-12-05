@@ -76,4 +76,9 @@ public class AdminServiceImplementation implements AdminService
     public boolean delete(User user) {
         return userRepository.delete(user);
     }
+
+    @Override
+    public boolean updateUserRole(String username, Role role) {
+        return userRepository.upgradeUserRole(username, role);
+    }
 }
