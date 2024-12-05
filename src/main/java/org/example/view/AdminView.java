@@ -28,7 +28,7 @@ public class AdminView {
     private Label passwordLabel;
     private Button saveButton;
     private Button deleteButton;
-    private Button addButton;
+    private Button generateReportButton;
     private Button viewBooksButton;
     private Text actiontarget;
 
@@ -38,7 +38,7 @@ public class AdminView {
         GridPane gridPane = new GridPane();
         initializeGridPane(gridPane);
 
-        Scene scene = new Scene(gridPane, 720, 480);
+        Scene scene = new Scene(gridPane, 1024, 768);
         primaryStage.setScene(scene);
 
         usersObservableList = FXCollections.observableArrayList(userDTOS);
@@ -97,6 +97,9 @@ public class AdminView {
         viewBooksButton = new Button("View Books");
         gridPane.add(viewBooksButton, 7, 1);
 
+        generateReportButton = new Button("Generate Report");
+        gridPane.add(generateReportButton, 8, 1);
+
 
     }
 
@@ -120,8 +123,8 @@ public class AdminView {
         deleteButton.setOnAction(deleteButtonListener);
     }
 
-    public void addAddButtonListener(EventHandler<ActionEvent> addButtonListener) {
-        addButton.setOnAction(addButtonListener);
+    public void addGenerateReportListener(EventHandler<ActionEvent> addButtonListener) {
+        generateReportButton.setOnAction(addButtonListener);
     }
 
     public void addSelectionTableListener(ChangeListener selectionTableListener) {

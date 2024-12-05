@@ -3,6 +3,7 @@ package org.example.controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.example.launcher.AdminComponentFactory;
+import org.example.launcher.CustomerComponentFactory;
 import org.example.launcher.EmployeeComponentFactory;
 import org.example.launcher.LoginComponentFactory;
 import org.example.model.User;
@@ -39,7 +40,7 @@ public class LoginController
 
             if (loginNotification.hasErrors()){
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
-            }else{
+            }else {
                 loginView.setActionTargetText("LogIn Successfull!");
                 CurrentUserService.setCurrentUsername(username);
                 System.out.println("CurrentUser: " + username);
@@ -49,14 +50,19 @@ public class LoginController
                 boolean isAdmin = loggedInUser.getRoles()
                         .stream()
                         .anyMatch(role -> role.getRole().equalsIgnoreCase("ADMINISTRATOR"));
-                if (isAdmin){
+                boolean isEmployee = loggedInUser.getRoles()
+                        .stream()
+                        .anyMatch(role -> role.getRole().equalsIgnoreCase("EMPLOYEE"));
+                if (isAdmin) {
                     //deshidem AdminView
                     AdminComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
                     //EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
 
-                }
-                else{
+                } else if (isEmployee) {
                     EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                    }
+                else {
+                    CustomerComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
                 }
             }
         }
