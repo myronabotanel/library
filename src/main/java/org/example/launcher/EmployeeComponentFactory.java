@@ -37,7 +37,7 @@ public class EmployeeComponentFactory
         return instance;
     }
 
-    public EmployeeComponentFactory(Boolean componentsForTest, Stage stage){
+    private EmployeeComponentFactory(Boolean componentsForTest, Stage stage){
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.bookRepository = new BookRepositoryCacheDecorator(new BookRepositoryMySQL(connection), new Cache<>());
         this.saleRepository = new SaleRepositoryMySQL(connection);
@@ -58,13 +58,5 @@ public class EmployeeComponentFactory
 
     public BookRepository getBookRepository() {
         return bookRepository;
-    }
-
-    public BookService getBookService() {
-        return bookService;
-    }
-
-    public static EmployeeComponentFactory getInstance() {
-        return instance;
     }
 }

@@ -40,7 +40,7 @@ public class AdminComponentFactory {
         return instance;
     }
 
-    public AdminComponentFactory(Boolean componentsForTest, Stage stage) {
+    private AdminComponentFactory(Boolean componentsForTest, Stage stage) {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
         this.userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
@@ -53,31 +53,5 @@ public class AdminComponentFactory {
         this.adminController = new AdminController(adminView, adminService, authenticationService, orderService);
     }
 
-    public AdminView getAdminView() {
-        return adminView;
-    }
 
-    public AdminController getAdminController() {
-        return adminController;
-    }
-
-    public AdminService getAdminService() {
-        return adminService;
-    }
-
-    public static AdminComponentFactory getInstance() {
-        return instance;
-    }
-
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
-
-    public RightsRolesRepository getRightsRolesRepository() {
-        return rightsRolesRepository;
-    }
-
-    public static void setInstance(AdminComponentFactory instance) {
-        AdminComponentFactory.instance = instance;
-    }
 }
