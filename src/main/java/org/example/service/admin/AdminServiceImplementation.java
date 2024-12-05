@@ -71,4 +71,9 @@ public class AdminServiceImplementation implements AdminService
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    @Override
+    public boolean delete(User user) {
+        return userRepository.delete(user);
+    }
 }

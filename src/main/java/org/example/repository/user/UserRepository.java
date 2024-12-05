@@ -12,6 +12,7 @@ public interface UserRepository
     Notification<User> findByUsernameAndPassword(String username, String password);
 
     boolean save(User user);
+    boolean delete (User user);
 
     void removeAll();
 

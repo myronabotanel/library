@@ -109,6 +109,19 @@ public class UserRepositoryMySQL implements UserRepository {
     }
 
     @Override
+    public boolean delete(User user) {
+        String sql = "DELETE FROM `" + USER + "` WHERE username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, user.getUsername());
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;  // Dacă a fost ștearsă cel puțin o linie, returnăm true
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;  // Dacă apare o eroare, returnăm false
+        }
+    }
+
+    @Override
     public void removeAll() {
         try {
             Statement statement = connection.createStatement();

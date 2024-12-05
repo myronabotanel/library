@@ -8,4 +8,5 @@ import java.util.List;
 public interface AdminService {
     Notification<Boolean> AddEmployee (String username, String password);
     public List<User> findAll();
+    boolean delete (User user);
 }

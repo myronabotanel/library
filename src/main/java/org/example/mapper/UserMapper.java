@@ -2,6 +2,7 @@ package org.example.mapper;
 
 import org.example.model.Role;
 import org.example.model.User;
+import org.example.model.builder.UserBuilder;
 import org.example.view.model.UserDTO;
 import org.example.view.model.builder.UserDTOBuilder;
 
@@ -27,4 +28,9 @@ public class UserMapper
 
     // Convertește o listă de UserDTO într-o listă de Users
 
+    // Convertește un obiect UserDTO într-un obiect User
+    public static User convertUserDTOToUser(UserDTO userDTO){
+        String username = userDTO.getUsername();
+        return new UserBuilder().setUsername(username).build(); //pastram doar username ul, deoarece, cand stergem un user, nu ne intereseaza parola sau right urile sau rolul
+    }
 }
