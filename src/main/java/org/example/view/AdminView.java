@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.view.model.UserDTO;
 import org.example.view.model.builder.UserDTOBuilder;
@@ -21,12 +23,14 @@ public class AdminView {
     private TableView<UserDTO> userTableView;
     private ObservableList<UserDTO> usersObservableList;
     private TextField usernameTextField;
-    private TextField roleTextField;
+    private TextField passwordTextField;
     private Label usernameLabel;
-    private Label roleLabel;
+    private Label passwordLabel;
     private Button saveButton;
     private Button deleteButton;
     private Button addButton;
+    private Button viewBooksButton;
+    private Text actiontarget;
 
     public AdminView(Stage primaryStage, List<UserDTO> userDTOS) {
         primaryStage.setTitle("Admin Panel");
@@ -62,6 +66,10 @@ public class AdminView {
 
         // Adăugăm TableView la grid
         gridPane.add(userTableView, 0, 0, 5, 1);
+
+        actiontarget = new Text();
+        actiontarget.setFill(Color.FIREBRICK);
+        gridPane.add(actiontarget, 1, 6);
     }
 
     private void initSaveOptions(GridPane gridPane) {
@@ -73,11 +81,11 @@ public class AdminView {
         gridPane.add(usernameTextField, 2, 1);
 
         // Etichetă și câmp pentru Role
-        roleLabel = new Label("Role");
-        gridPane.add(roleLabel, 3, 1);
+        passwordLabel = new Label("Password");
+        gridPane.add(passwordLabel, 3, 1);
 
-        roleTextField = new TextField();
-        gridPane.add(roleTextField, 4, 1);
+        passwordTextField = new TextField();
+        gridPane.add(passwordTextField, 4, 1);
 
         // Butoane Save și Delete
         saveButton = new Button("Save");
@@ -86,8 +94,10 @@ public class AdminView {
         deleteButton = new Button("Delete");
         gridPane.add(deleteButton, 6, 1);
 
-        addButton = new Button("Add Employee");
-        gridPane.add(addButton, 7, 1);
+        viewBooksButton = new Button("View Books");
+        gridPane.add(viewBooksButton, 7, 1);
+
+
     }
 
     private void initializeGridPane(GridPane gridPane) {
@@ -100,6 +110,11 @@ public class AdminView {
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener) {
         saveButton.setOnAction(saveButtonListener);
     }
+    public void addViewBooksButtonListener(EventHandler<ActionEvent> viewBooksButtonListener){
+        viewBooksButton.setOnAction(viewBooksButtonListener);
+    }
+    public void setActionTargetText(String text){ this.actiontarget.setText(text);}
+
 
     public void addDeleteButtonListener(EventHandler<ActionEvent> deleteButtonListener) {
         deleteButton.setOnAction(deleteButtonListener);
@@ -126,8 +141,8 @@ public class AdminView {
         return usernameTextField.getText();
     }
 
-    public String getRole() {
-        return roleTextField.getText();
+    public String getPassword() {
+        return passwordTextField.getText();
     }
 
     public ObservableList<UserDTO> getUsersObservableList() {
@@ -145,4 +160,9 @@ public class AdminView {
     public TableView getUserTableView() {
         return userTableView;
     }
+
+    public TextField getUsernameTextField() {
+        return usernameTextField;
+    }
+
 }

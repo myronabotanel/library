@@ -2,6 +2,7 @@ package org.example.controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import org.example.launcher.AdminComponentFactory;
 import org.example.launcher.EmployeeComponentFactory;
 import org.example.launcher.LoginComponentFactory;
 import org.example.model.User;
@@ -42,7 +43,21 @@ public class LoginController
                 loginView.setActionTargetText("LogIn Successfull!");
                 CurrentUserService.setCurrentUsername(username);
                 System.out.println("CurrentUser: " + username);
-                EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+
+                // Verificăm dacă utilizatorul are rolul ADMIN
+                User loggedInUser = loginNotification.getResult();
+                boolean isAdmin = loggedInUser.getRoles()
+                        .stream()
+                        .anyMatch(role -> role.getRole().equalsIgnoreCase("ADMINISTRATOR"));
+                if (isAdmin){
+                    //deshidem AdminView
+                    AdminComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                    //EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+
+                }
+                else{
+                    EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                }
             }
         }
     }

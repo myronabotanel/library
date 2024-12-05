@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.util.Collections;
 
 import static org.example.database.Constants.Roles.CUSTOMER;
+import static org.example.database.Constants.Roles.EMPLOYEE;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -39,6 +40,41 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
         Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
+
+        User user = new UserBuilder()
+                .setUsername(username)
+                .setPassword(password)
+                .setRoles(Collections.singletonList(role))
+                .build();
+
+        UserValidator userValidator = new UserValidator(user);
+
+        boolean userValid = userValidator.validate();
+        Notification<Boolean> userRegisterNotification = new Notification<>();
+
+        if (!userValid){
+            userValidator.getErrors().forEach(userRegisterNotification::addError);
+            userRegisterNotification.setResult(Boolean.FALSE);
+        } else {
+            user.setPassword(hashPassword(password));
+            userRegisterNotification.setResult(userRepository.save(user));
+        }
+
+        return userRegisterNotification;
+    }
+
+    @Override
+    public Notification<Boolean> registerEmployee(String username, String password) {
+        // Verifică dacă username-ul este deja folosit
+        if (userRepository.existsByUsername(username)) {
+            Notification<Boolean> userRegisterNotification = new Notification<>();
+            userRegisterNotification.addError("Username already used!");
+            userRegisterNotification.setResult(Boolean.FALSE);
+            return userRegisterNotification; // Întoarce notificarea cu mesaj de eroare
+        }
+
+
+        Role role = rightsRolesRepository.findRoleByTitle(EMPLOYEE);
 
         User user = new UserBuilder()
                 .setUsername(username)

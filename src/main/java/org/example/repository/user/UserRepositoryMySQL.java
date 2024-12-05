@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.example.database.Constants.Tables.USER;
@@ -26,7 +27,24 @@ public class UserRepositoryMySQL implements UserRepository {
 
     @Override
     public List<User> findAll() {
-        return null;
+        List<User> users = new ArrayList<>();
+        String sql = "Select * from `" + USER + "`";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                User user = new UserBuilder()
+                        .setId(resultSet.getLong("id"))
+                        .setUsername(resultSet.getString("username"))
+                        .setPassword(resultSet.getString("password"))
+                        .setRoles(rightsRolesRepository.findRolesForUser(resultSet.getLong("id")))
+                        .build();
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
 
     // SQL Injection Attacks should not work after fixing functions
