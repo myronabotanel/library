@@ -2,13 +2,19 @@ package org.example.controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.example.launcher.AdminComponentFactory;
+import org.example.launcher.CustomerComponentFactory;
 import org.example.launcher.EmployeeComponentFactory;
 import org.example.launcher.LoginComponentFactory;
 import org.example.model.User;
 import org.example.model.validator.Notification;
 import org.example.model.validator.UserValidator;
 import org.example.service.user.AuthenticationService;
+import org.example.service.user.CurrentUserService;
 import org.example.view.LoginView;
+import org.example.view.NavigationManager;
 
 import java.util.EventListener;
 import java.util.List;
@@ -33,13 +39,35 @@ public class LoginController
             String username = loginView.getUsername();
             String password = loginView.getPassword();
 
+
             Notification<User> loginNotification = authenticationService.login(username, password);
 
             if (loginNotification.hasErrors()){
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
-            }else{
+            }else {
                 loginView.setActionTargetText("LogIn Successfull!");
-                EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                CurrentUserService.setCurrentUsername(username);
+                System.out.println("CurrentUser: " + username);
+
+                // Verificăm dacă utilizatorul are rolul ADMIN
+                User loggedInUser = loginNotification.getResult();
+                boolean isAdmin = loggedInUser.getRoles()
+                        .stream()
+                        .anyMatch(role -> role.getRole().equalsIgnoreCase("ADMINISTRATOR"));
+                boolean isEmployee = loggedInUser.getRoles()
+                        .stream()
+                        .anyMatch(role -> role.getRole().equalsIgnoreCase("EMPLOYEE"));
+                if (isAdmin) {
+                    //deshidem AdminView
+                    AdminComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                    //EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+
+                } else if (isEmployee) {
+                    EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                    }
+                else {
+                    CustomerComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                }
             }
         }
     }

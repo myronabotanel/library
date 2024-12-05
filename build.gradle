@@ -16,6 +16,10 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'mysql:mysql-connector-java:8.0.33'
+
+    // Bibliotecă iText pentru generarea PDF-urilor
+    implementation 'com.itextpdf:itext7-core:7.2.6'
+
     // Testcontainers
     testImplementation 'org.testcontainers:testcontainers:1.17.6'   // or latest version
     testImplementation 'org.testcontainers:junit-jupiter:1.17.6'   // JUnit 5 support

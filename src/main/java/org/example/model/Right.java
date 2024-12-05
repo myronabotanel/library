@@ -10,7 +10,6 @@ public class Right
         this.id = id;
         this.right = right;
     }
-
     public Long getId() {
         return id;
     }

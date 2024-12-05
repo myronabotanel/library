@@ -2,6 +2,7 @@ package org.example.view.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 public class BookDTO {
     private StringProperty author;
@@ -38,24 +39,40 @@ public class BookDTO {
         return title;
     }
 
-    private double price;
+    // Proprietăți pentru Price
+    private DoubleProperty price;
+
+    public void setPrice(double price) {
+        priceProperty().set(price);
+    }
 
     public double getPrice() {
+        return priceProperty().get();
+    }
+
+    public DoubleProperty priceProperty() {
+        if (price == null) {
+            price = new SimpleDoubleProperty(this, "price");
+        }
         return price;
     }
 
+    // Proprietăți pentru Stock
+        private IntegerProperty stock;
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setStock(int stock) {
+        stockProperty().set(stock);
     }
-    private long stock;
 
-    public long getStock() {
+    public int getStock() {
+        return stockProperty().get();
+    }
+
+    public IntegerProperty stockProperty() {
+        if (stock == null) {
+            stock = new SimpleIntegerProperty(this, "stock");
+        }
         return stock;
-    }
-
-    public void setStock(long stock) {
-        this.stock = stock;
     }
     //pt date?
 }

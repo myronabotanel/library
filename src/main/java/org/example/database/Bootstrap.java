@@ -1,7 +1,13 @@
 package org.example.database;
 
+import org.example.model.Right;
+import org.example.model.Role;
+import org.example.model.User;
+import org.example.model.builder.UserBuilder;
 import org.example.repository.security.RightsRolesRepository;
 import org.example.repository.security.RightsRolesRepositoryMySQL;
+import org.example.repository.user.UserRepository;
+import org.example.repository.user.UserRepositoryMySQL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,6 +27,7 @@ import static org.example.database.Constants.getRolesRights;
 public class Bootstrap {
 
     private static RightsRolesRepository rightsRolesRepository;
+    private static UserRepository userRepository;
 
     public static void main(String[] args) throws SQLException {
         dropAll();
@@ -45,7 +52,7 @@ public class Bootstrap {
                     "TRUNCATE `user_role`;",
                     "DROP TABLE `user_role`;",
                     "TRUNCATE `role`;",
-                    "DROP TABLE  `book`, `role`, `user`;"
+                    "DROP TABLE  `book`, `role`, `user`, `order`;"
             };
 
             Arrays.stream(dropStatements).forEach(dropStatement -> {
@@ -94,6 +101,8 @@ public class Bootstrap {
             bootstrapUserRoles();
         }
     }
+
+
 
     private static void bootstrapRoles() throws SQLException {
         for (String role : ROLES) {

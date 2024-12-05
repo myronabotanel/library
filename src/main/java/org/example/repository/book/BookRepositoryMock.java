@@ -30,8 +30,20 @@ public class BookRepositoryMock implements BookRepository
 
     @Override
     public boolean save(Book book) {
-        return books.add(book);
+        for (Book existingBook : books) {
+            if (existingBook.getAuthor().equals(book.getAuthor()) &&
+                    existingBook.getTitle().equals(book.getTitle()) &&
+                    existingBook.getPrice() == book.getPrice()) {
+                // Actualizăm stocul
+                existingBook.setStock(existingBook.getStock() + book.getStock());
+                return true;
+            }
+        }
+        // Adăugăm cartea ca nouă
+        books.add(book);
+        return true;
     }
+
 
     @Override
     public boolean delete(Book book) {
@@ -44,15 +56,7 @@ public class BookRepositoryMock implements BookRepository
     }
 
     @Override
-    public boolean updateStock(long id, int newStock) {
-        Optional<Book> bookOptional = findById(id);
-
-        if (bookOptional.isPresent()) {
-            Book book = bookOptional.get();
-            book.setStock(newStock);
-            return true;
-        }
-
+    public boolean update(Book book) {
         return false;
     }
 }

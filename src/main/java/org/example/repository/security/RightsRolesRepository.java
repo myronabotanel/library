@@ -23,4 +23,5 @@ public interface RightsRolesRepository
     List<Role> findRolesForUser(Long userId); //cautam dupa user id => lista roluri din db
 
     void addRoleRight(Long roleId, Long rightId);  //face leg dintre un rol si un drept
+
 }
