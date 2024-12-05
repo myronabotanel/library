@@ -52,55 +52,79 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository {
 
     @Override
     public Role findRoleByTitle(String role) {
-        Statement statement;
         try {
-            statement = connection.createStatement();
-            String fetchRoleSql = "Select * from `" + ROLE + "` where `role`=\'" + role + "\'";
-            ResultSet roleResultSet = statement.executeQuery(fetchRoleSql);
-            roleResultSet.next();
-            Long roleId = roleResultSet.getLong("id");
-            String roleTitle = roleResultSet.getString("role");
-            return new Role(roleId, roleTitle, null);
+            // Interogarea SQL cu un parametru placeholder ?
+            String fetchRoleSql = "SELECT * FROM `" + ROLE + "` WHERE `role` = ?";
+
+            // Pregătirea interogării SQL cu PreparedStatement
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
+
+            // Setarea valorii parametrului
+            preparedStatement.setString(1, role);  // Setează 'role' în locul semnului de întrebare
+
+            // Executarea interogării și obținerea rezultatului
+            ResultSet roleResultSet = preparedStatement.executeQuery();
+
+            // Verificăm dacă există un rezultat
+            if (roleResultSet.next()) {
+                Long roleId = roleResultSet.getLong("id");
+                String roleTitle = roleResultSet.getString("role");
+                return new Role(roleId, roleTitle, null);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return null;
     }
+
 
     @Override
     public Role findRoleById(Long roleId) {
-        Statement statement;
         try {
-            statement = connection.createStatement();
-            String fetchRoleSql = "Select * from `" + ROLE + "` where `id`=\'" + roleId + "\'";
-            ResultSet roleResultSet = statement.executeQuery(fetchRoleSql);
-            roleResultSet.next();
-            String roleTitle = roleResultSet.getString("role");
-            return new Role(roleId, roleTitle, null);
+            // Interogarea SQL cu un parametru placeholder ?
+            String fetchRoleSql = "SELECT * FROM `" + ROLE + "` WHERE `id` = ?";
+
+            // Pregătirea interogării SQL cu PreparedStatement
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
+
+            // Setarea valorii parametrului
+            preparedStatement.setLong(1, roleId);  // Setează roleId în locul semnului de întrebare
+
+            // Executarea interogării și obținerea rezultatului
+            ResultSet roleResultSet = preparedStatement.executeQuery();
+
+            // Verificăm dacă există un rezultat
+            if (roleResultSet.next()) {
+                String roleTitle = roleResultSet.getString("role");
+                return new Role(roleId, roleTitle, null);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return null;
     }
+
 
     @Override
     public Right findRightByTitle(String right) {
-        Statement statement;
         try {
-            statement = connection.createStatement();
-            String fetchRoleSql = "Select * from `" + RIGHT + "` where `right`=\'" + right + "\'";
-            ResultSet rightResultSet = statement.executeQuery(fetchRoleSql);
-            rightResultSet.next();
-            Long rightId = rightResultSet.getLong("id");
-            String rightTitle = rightResultSet.getString("right");
-            return new Right(rightId, rightTitle);
+            String fetchRoleSql = "SELECT * FROM `" + RIGHT + "` WHERE `right` = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
+            preparedStatement.setString(1, right); // Corectăm de la `role` la `right`
+            ResultSet rightResultSet = preparedStatement.executeQuery();
+            if (rightResultSet.next()) {  // Verificăm dacă sunt rezultate
+                Long rightId = rightResultSet.getLong("id");
+                String rightTitle = rightResultSet.getString("right");
+                return new Right(rightId, rightTitle);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 
     @Override
     public void addRolesToUser(User user, List<Role> roles) {
@@ -121,19 +145,22 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository {
     public List<Role> findRolesForUser(Long userId) {
         try {
             List<Role> roles = new ArrayList<>();
-            Statement statement = connection.createStatement();
-            String fetchRoleSql = "Select * from `" + USER_ROLE + "` where `user_id`=\'" + userId + "\'";
-            ResultSet userRoleResultSet = statement.executeQuery(fetchRoleSql);
+            String fetchRoleSql = "SELECT * FROM `" + USER_ROLE + "` WHERE `user_id` = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchRoleSql);
+            preparedStatement.setLong(1, userId);  // Setăm userId în locul semnului de întrebare
+
+            ResultSet userRoleResultSet = preparedStatement.executeQuery();
             while (userRoleResultSet.next()) {
                 long roleId = userRoleResultSet.getLong("role_id");
                 roles.add(findRoleById(roleId));
             }
             return roles;
         } catch (SQLException e) {
-
+            e.printStackTrace();
         }
         return null;
     }
+
 
     @Override
     public void addRoleRight(Long roleId, Long rightId) {

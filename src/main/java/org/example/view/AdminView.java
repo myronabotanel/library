@@ -39,7 +39,7 @@ public class AdminView {
         GridPane gridPane = new GridPane();
         initializeGridPane(gridPane);
 
-        Scene scene = new Scene(gridPane, 900, 650);
+        Scene scene = new Scene(gridPane, 1000, 650);
         primaryStage.setScene(scene);
 
         Button backButton = new Button("Back");
@@ -68,6 +68,9 @@ public class AdminView {
         // Adăugăm toate coloanele în TableView
         userTableView.getColumns().addAll(usernameColumn, roleColumn);
         userTableView.setItems(usersObservableList);
+
+        // Ajustam lățimile pentru a elimina coloana goală
+        userTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Adăugăm TableView la grid
         gridPane.add(userTableView, 0, 0, 5, 1);
