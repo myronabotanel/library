@@ -1,152 +1,129 @@
 # Library Management System
 
-## 📋 Descriere
-Sistem de Management al Bibliotecii este o aplicație Java modernă care oferă o soluție completă pentru gestionarea unei biblioteci. Aplicația permite gestionarea cărților, utilizatorilor, împrumuturilor și oferă funcționalități avansate pentru diferite tipuri de utilizatori (administratori, angajați și clienți).
+## 📋 Description
+Library Management System is a modern Java application that provides a complete solution for library management. The application enables book management, user management, loan processing, and offers advanced features for different types of users (administrators, employees, and customers).
 
-## 🚀 Funcționalități
+## 🚀 Features
 
-### Pentru Administratori
-- Gestionarea completă a utilizatorilor (adăugare, ștergere, modificare)
-- Gestionarea angajaților
-- Vizualizarea rapoartelor și statisticilor
-- Gestionarea stocului de cărți
-- Monitorizarea activității sistemului
+### For Administrators
+- Complete user management (add, delete, modify)
+- Employee management
+- Reports and statistics viewing
+- Book stock management
+- System activity monitoring
 
-### Pentru Angajați
-- Gestionarea împrumuturilor
-- Procesarea returnărilor
-- Căutarea și rezervarea cărților
-- Asistență clienți
+### For Employees
+- Loan management
+- Return processing
+- Book search and reservation
+- Customer assistance
 
-### Pentru Clienți
-- Căutarea cărților
-- Rezervarea cărților
-- Vizualizarea istoricului personal
-- Gestionarea contului personal
+### For Customers
+- Book search
+- Book reservation
+- Personal history viewing
+- Account management
 
-## 🛠 Tehnologii Utilizate
+## 🛠 Technologies Used
 
-### Limbaje și Framework-uri
+### Languages and Frameworks
 - Java 21
-- JavaFX 21.0.1 (pentru interfața grafică)
-- Gradle (sistem de build)
+- JavaFX 21.0.1 (for GUI)
+- Gradle (build system)
 
-### Baza de Date
+### Database
 - MySQL 8.0
-- JDBC pentru conectare
+- JDBC for connection
 
-### Biblioteci și Dependențe
-- iText7 (pentru generarea rapoartelor PDF)
-- Logback (pentru logging)
-- JUnit 5 (pentru testare)
-- Testcontainers (pentru teste de integrare)
+### Libraries and Dependencies
+- iText7 (for PDF report generation)
+- Logback (for logging)
+- JUnit 5 (for testing)
+- Testcontainers (for integration testing)
 
-## 🔒 Securitate
+## 🔒 Security
 
-### Autentificare și Autorizare
-- Sistem de login/register securizat
-- Hash-uri SHA-256 pentru parole
-- Validare robustă a credențialelor
-- Sistem de roluri (ADMINISTRATOR, EMPLOYEE, CUSTOMER)
+### Authentication and Authorization
+- Secure login/register system
+- SHA-256 password hashing
+- Robust credential validation
+- Role-based system (ADMINISTRATOR, EMPLOYEE, CUSTOMER)
 
-### Validări
-- Validare email pentru username
-- Parole complexe (minim 8 caractere, caractere speciale, cifre)
-- Prevenire SQL injection prin PreparedStatements
-- Validare input la toate nivelurile
+### Validations
+- Email validation for username
+- Complex passwords (minimum 8 characters, special characters, digits)
+- SQL injection prevention through PreparedStatements
+- Input validation at all levels
 
-### Protecție Date
-- Parole hash-uite în baza de date
-- Conexiuni securizate la baza de date
-- Gestionare sesiuni utilizator
-- Logging pentru audit și debugging
+### Data Protection
+- Hashed passwords in database
+- Secure database connections
+- User session management
+- Logging for audit and debugging
 
-## 🏗 Arhitectură
+## 🏗 Architecture
 
-### Pattern-uri de Design
-- Factory Pattern (pentru crearea componentelor)
-- Builder Pattern (pentru construirea obiectelor)
-- Repository Pattern (pentru accesul la date)
-- Service Pattern (pentru logica de business)
+### Design Patterns
+- Factory Pattern (for component creation)
+- Builder Pattern (for object construction)
+- Repository Pattern (for data access)
+- Service Pattern (for business logic)
 - MVC (Model-View-Controller)
 
-### Structura Proiectului
+### Project Structure
 ```
 src/main/java/org/example/
-├── controller/     # Controlere pentru UI
-├── model/         # Entități și validatori
-├── repository/    # Acces la date
-├── service/       # Logică de business
-├── view/          # Interfețe UI
-└── launcher/      # Puncte de intrare
+├── controller/     # UI Controllers
+├── model/         # Entities and validators
+├── repository/    # Data access
+├── service/       # Business logic
+├── view/          # UI interfaces
+└── launcher/      # Entry points
 ```
 
-## 📦 Instalare și Configurare
+## 📦 Installation and Configuration
 
-### Cerințe Preliminare
-- Java 21 sau mai nou
-- MySQL 8.0 sau mai nou
-- Gradle 8.1 sau mai nou
+### Prerequisites
+- Java 21 or newer
+- MySQL 8.0 or newer
+- Gradle 8.1 or newer
 
-### Pași de Instalare
-1. Clonează repository-ul
+### Installation Steps
+1. Clone the repository
 ```bash
 git clone [repository-url]
 ```
 
-2. Configurează baza de date
-- Creează o bază de date MySQL
-- Actualizează credențialele în fișierul de configurare
+2. Configure the database
+- Create a MySQL database
+- Update credentials in the configuration file
 
-3. Build și Rulare
+3. Build and Run
 ```bash
 ./gradlew build
 ./gradlew run
 ```
 
-## 🧪 Testare
+## 🧪 Testing
 
-### Tipuri de Teste
-- Teste unitare (JUnit 5)
-- Teste de integrare (Testcontainers)
-- Teste de performanță
+### Test Types
+- Unit tests (JUnit 5)
+- Integration tests (Testcontainers)
+- Performance tests
 
-### Rulare Teste
+### Running Tests
 ```bash
 ./gradlew test
 ```
 
-## 📊 Performanță
+## 📊 Performance
 
-### Optimizări
-- Caching implementat pentru cărți
-- Queries optimizate
-- Conexiuni la baza de date gestionate eficient
+### Optimizations
+- Implemented caching for books
+- Optimized queries
+- Efficient database connection management
 
-### Monitorizare
-- Logging pentru debugging
-- Metrici de performanță
-- Rapoarte de utilizare
-
-## 🔄 Dezvoltare
-
-### Contribuție
-1. Fork repository-ul
-2. Creează un branch nou
-3. Commit schimbările
-4. Push la branch
-5. Creează un Pull Request
-
-### Standarde de Cod
-- Respectă convențiile de nume Java
-- Documentează codul complex
-- Scrie teste pentru funcționalități noi
-
-## 📝 Licență
-[Specificați licența proiectului]
-
-## 👥 Autori
-[Specificați autorii proiectului]
-
-## 🙏 Mulțumiri
-[Opcional: Mulțumiri speciale sau recunoașteri]
+### Monitoring
+- Logging for debugging
+- Performance metrics
+- Usage reports
